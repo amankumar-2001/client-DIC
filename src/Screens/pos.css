@@ -1,0 +1,56 @@
+.pos {
+  position: relative;
+  top: 5rem;
+}
+
+.out{
+  height: 75vh;
+}
+.eleContainer {
+  display: block;
+  overflow: auto; 
+  position: relative;
+  height: 81%;
+  float: inline-start;
+}
+
+.btn {
+  background-color: black;
+  border: 1px solid black !important;
+  margin-top: 1rem !important;
+  width: 100%;
+}
+
+.btn:hover {
+  background-color: gray;
+}
+
+.no-back {
+  background: none;
+  border: none;
+}
+
+.bg-white {
+    --bs-bg-opacity: 0.3;
+}
+
+.customLink{
+  color: white;
+}
+.customLink:hover{
+  color: black;
+}
+
+.aboutText{
+  font-size: large;
+  font-weight: 400;
+  color: white;
+}
+.aboutText h1{
+  font-size: 4vw;
+}
+
+.aboutText .disc{
+  font-size: 1vw;
+  
+}
