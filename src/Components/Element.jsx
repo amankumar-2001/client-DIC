@@ -14,7 +14,7 @@ function Element(params) {
           <p className="card-text">{params.item.createdAt}</p>
           <p className="card-text">{params.item.data}</p>
         </div>
-        <Link to={`../data/${params.item._id}`}>
+        <Link to={`../data/dataById/${params.item._id}`}>
         <button className="btn btn-primary btn3">Details</button>
         </Link>
       </div>

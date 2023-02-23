@@ -1,0 +1,22 @@
+.main{
+    display: flex;
+    height: 80%;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    background-color: rgb(204, 204, 204);
+}
+
+.middle-line{
+    background-color: black;
+    width: 0.3%;
+    height: 80%;
+}
+.profile-data{
+    border: black;
+    width: 30%;
+}
+
+.details{
+    width: 70%;
+}

@@ -3,9 +3,6 @@
   margin: 1rem;
 }
 
-.size:hover{
-  cursor: pointer;
-}
 .size { 
   transition: all .7s ease-in-out; 
 }

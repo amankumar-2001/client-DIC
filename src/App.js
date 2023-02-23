@@ -24,7 +24,7 @@ function App() {
           <Route path="/users/login" exact element={<HomeScreen />} />
           <Route path="/users/register" exact element={<HomeScreen />} />
           <Route path="/data/addData" exact element={<GettingStartScreen />} />
-          <Route path="/data/:dataId" exact element={<ElementModel/>} />
+          <Route path="/data/dataById/:dataId" exact element={<ElementModel/>} />
           <Route path="/about" exact element={<AboutScreen />} />
           <Route path="/contact" exact element={<ContactScreen/>} />
           <Route path="/data" exact element={<GettingStartScreen/>} />
