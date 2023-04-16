@@ -13,13 +13,12 @@ function Loginscreen() {
   async function check() {
       const findUser = {email, password};
       try {
+        console.log(findUser);
         const result = await axios.post("http://localhost:5000/users/login",findUser);
       
-        if (result) 
-        {
-           dispatch(loginUser(result.data));
-           window.location.href = "/data";
-        }   
+        dispatch(loginUser(result.data));
+        window.localStorage.setItem("currentUser", JSON.stringify(result.data));
+        window.location.href = "/data";    
       } catch (err) {
         console.log(err);
       }
@@ -36,7 +35,7 @@ function Loginscreen() {
               placeholder="email"
               value={email}
               onChange={(e) => setemail(e.target.value)}
-            />
+            /> 
             <input
               type="password"
               className="form-control mt-2"
@@ -45,7 +44,7 @@ function Loginscreen() {
               onChange={(e) => setpassword(e.target.value)}
             />
 
-            <button className="btn-primary btn" onClick={check}>Login</button>
+            <button className="btn-primary btn" onClick={()=>check()}>Login</button>
         </div>
       </div>
     </div>

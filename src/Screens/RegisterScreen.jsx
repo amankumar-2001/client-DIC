@@ -8,12 +8,12 @@ function Registerscreen() {
   const [cpassword, setcpassword] = useState("");
 
   async function check() {
-    if (password == cpassword) {
+    if (password === cpassword) {
       const newUser = { name, email, password, cpassword };
       try {
         const result = await axios.post("http://localhost:5000/users/register", newUser);
         if(result)
-           window.location.href = "/gettingstart";
+           window.location.href = "/users/login"; 
       } catch (err) {
         console.log(err);
       }

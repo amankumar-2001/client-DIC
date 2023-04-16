@@ -9,6 +9,7 @@ import Loader from "../../Components/Loader";
 
 function GettingStartScreen() {
   const [show, setShow] = useState(false);
+  const [user , setuser]=useState([]);
   const [info, setInfo] = useState();
   const [loading, setloading] = useState([]);
   const [result, setResult] = useState([]);
@@ -19,12 +20,15 @@ function GettingStartScreen() {
     "Form",
     "Notes",
   ]);
+
   const getData = async () => {
     try {
       setloading(true);
-      const getResult = await axios.get("http://localhost:5000/data");
-      setResult(getResult.data);
-      setInfo(getResult.data);
+      const getResult = await (await axios.get("http://localhost:5000/data")).data;
+      
+      setResult(getResult);
+      setInfo(getResult);
+
       setloading(false);
     } catch (err) {
       console.log(err);
@@ -32,10 +36,14 @@ function GettingStartScreen() {
   };
 
   useEffect(() => {
+    setuser(JSON.parse(localStorage.getItem("currentUser")));
+    if(!user)
+       window.location.href='/';
+    
     getData();
   }, []);
 
-  function filterByType(val) {
+  function filterByType(val) { 
     allType.forEach((typeId) => {
       let path = document.getElementById(typeId);
       if (typeId == val) {
@@ -132,7 +140,8 @@ function GettingStartScreen() {
               </div>
             ) : (
               info.map((value, i) => {
-                return <Element item={value} key={i} />;
+                if(user.email == value.user)
+                   return <Element item={value} key={i} />;
               })
             )}
           </div>

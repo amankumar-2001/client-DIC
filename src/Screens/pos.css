@@ -16,7 +16,7 @@
 
 .btn {
   background-color: black;
-  border: 1px solid black !important;
+  border:none !important;
   margin-top: 1rem !important;
   width: 100%;
 }

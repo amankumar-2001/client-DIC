@@ -1,20 +1,17 @@
 import React, { useState } from "react";
 import "./nav.css";
 import { Link } from "react-router-dom";
-import {useSelector} from "react-redux";
 
 function Navbar() {
-  let [user ,setUser]=useState("");
-  const data = useSelector((state)=>{
-    return state.user;
-  })
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("currentUser"))
+  );
   
-  function check(){
-    setUser(data[0]);
-    console.log(user);
-    return user;
+  function logOut(){
+    localStorage.removeItem("currentUser");
+    window.location.href = "/";
   }
- 
+
   return (
     <nav class="navbar navbar-expand-lg navbar-dark p-md-3 shadow-lg p-3 remain">
       <div className="container-fluid">
@@ -50,12 +47,12 @@ function Navbar() {
               </Link>
             </li>
           </ul>
-          { check && (
+          {user && (
             <>
               <div className="btn-group">
                 <button
                   type="button"
-                  className="btn btn-secondary dropdown-toggle no-back profile-info"
+                  className="btn btn-secondary dropdown-toggle no-back drpdown"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
@@ -76,7 +73,11 @@ function Navbar() {
                     <hr className="dropdown-divider" />
                   </li>
                   <li>
-                    <button className="dropdown-item" type="button">
+                    <button
+                      className="dropdown-item"
+                      type="button"
+                      onClick={() => logOut()}
+                    >
                       Log out
                     </button>
                   </li>

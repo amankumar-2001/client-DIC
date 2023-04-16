@@ -3,24 +3,32 @@ import { useState } from "react";
 import axios from "axios";
 
 function Add() {
-  const [user,setUser]=useState("");
-  const [type,setType]=useState('Blog');
+  const [user,setUser]=useState(JSON.parse(localStorage.getItem("currentUser")).email);
+  const [type, setType] = useState("Select the Create Type");
   const [data,setData]=useState("");
 
   async function handleSubmitData(){
      const newData={user,type,data};
-      try {
-        const result = await axios.post("http://localhost:5000/data/createData", newData);
-        if(result)
-        {
-            setUser("");
-            setType("");
-            setData("");
-            window.location='/data';
-        }
-      } catch (err) {
-        console.log(err);
-      }
+     if (type!= "Select the Create Type")
+     {
+       try {
+         const result = await axios.post(
+           "http://localhost:5000/data/createData",
+           newData
+         );
+         if (result) {
+           setType("");
+           setData("");
+           window.location = "/data";
+         }
+       } catch (err) {
+         console.log(err);
+       }
+     }
+     else
+     {
+        alert("Please select the Create type");
+     }
   }
   return (
     <div>
@@ -54,9 +62,8 @@ function Add() {
                     type="email"
                     className="form-control"
                     id="exampleFormControlInput1"
-                    placeholder="name@example.com"
-                    value={user}
-                    onChange={(e) => setUser(e.target.value)}
+                    placeholder={user}
+                    disabled
                   />
                 </div>
                 <div className="form-group">
@@ -69,6 +76,7 @@ function Add() {
                     value={type}
                     onChange={(e) => setType(e.target.value)}
                   >
+                    <option>Select the Create Type</option>
                     <option>Blog</option>
                     <option>Form</option>
                     <option>Notes</option>
