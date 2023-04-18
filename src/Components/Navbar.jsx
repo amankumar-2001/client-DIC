@@ -1,19 +1,20 @@
 import React, { useState } from "react";
+import {Link, useNavigate } from "react-router-dom";
 import "./nav.css";
-import { Link } from "react-router-dom";
 
 function Navbar() {
-  const [user, setUser] = useState(
+  const navigate = useNavigate();
+  const [user] = useState(
     JSON.parse(localStorage.getItem("currentUser"))
   );
   
   function logOut(){
     localStorage.removeItem("currentUser");
-    window.location.href = "/";
+    navigate("/");
   }
 
   return (
-    <nav class="navbar navbar-expand-lg navbar-dark p-md-3 shadow-lg p-3 remain">
+    <nav className="navbar navbar-expand-lg navbar-dark shadow-lg remain">
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">
           Deep-Into-CRUD

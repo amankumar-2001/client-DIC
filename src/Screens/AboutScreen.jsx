@@ -6,39 +6,28 @@ function AboutScreen() {
     <div className="container pos aboutText">
       <h1>About</h1>
       <div className="disc">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid eos ex
-        exercitationem aliquam architecto voluptates nulla at magni? Doloribus
-        nisi quas iste quae voluptates reiciendis molestiae, perferendis
-        laboriosam saepe natus nam ipsam repudiandae excepturi dignissimos id
-        nesciunt consequuntur nulla, cupiditate ad odit. Ipsum reprehenderit
-        blanditiis consectetur. Quia quaerat consequuntur voluptatibus ipsum
-        vitae error quidem, sint officiis repellendus perspiciatis pariatur
-        reprehenderit ducimus expedita, ea iure molestiae! Cum tempora quidem
-        nostrum aperiam inventore quas tempore consectetur impedit magni illo
-        modi, id libero, placeat veritatis asperiores vel commodi illum
-        cupiditate repellat sed iste a. Velit molestias similique cumque a.
-        Sint, odit. Dolor, corporis. Lorem ipsum dolor sit amet consectetur
-        adipisicing elit. Ea cum sunt explicabo nemo eaque qui dicta placeat
-        nisi. Unde officiis enim aut, eius nemo quis assumenda numquam animi est
-        consectetur ut quae pariatur eligendi aliquam itaque soluta provident,
-        ad eaque. Id distinctio aliquam labore sapiente enim, voluptate debitis,
-        dolorum similique veritatis esse harum dolore? Accusantium pariatur
-        exercitationem aut laborum numquam, dolore nesciunt beatae et ad dolorum
-        unde libero consequuntur, impedit accusamus iste natus nobis molestiae
-        culpa. Esse, inventore neque nostrum quos natus laudantium minus
-        corporis dolore? Eum aliquam numquam beatae earum nostrum sequi eius,
-        magni, sunt fuga nobis voluptatem quos deleniti ab impedit iste ipsum
-        laudantium quod quae reprehenderit repellat. Iusto quae quia pariatur
-        cum placeat minima laboriosam. Magni distinctio rem voluptas non
-        assumenda necessitatibus fuga eaque ea aperiam soluta architecto laborum
-        molestias vero facere aliquam debitis doloremque ullam fugiat quis dicta
-        quo, consequatur est pariatur quidem! At cupiditate labore dolorem
-        tenetur voluptas placeat eveniet sint expedita aspernatur perspiciatis
-        quidem saepe tempora nesciunt nemo, error doloribus minima. Facilis modi
-        nihil quae eaque, dolor reprehenderit saepe cupiditate quis corporis
-        optio perspiciatis culpa recusandae a sequi error eos temporibus
-        corrupti. Adipisci voluptatum, nam hic commodi dolor atque illo cumque
-        repudiandae accusantium in.
+        Welcome to the DEEP-INTO-CRUD(online storage website!).<br/> We are thrilled to have you here
+        and would like to share with you a bit about who we are and what we
+        stand for. Our team is made up of passionate individuals who believe in
+        the power of technology to make life easier and more efficient. We
+        recognize that as our digital lives become increasingly complex, we need
+        reliable and secure solutions to store and access our data. That's where
+        our online storage platform comes in. We offer a range of storage
+        options, from basic plans for personal use to advanced plans for
+        businesses and organizations. Our platform is designed with ease of use
+        in mind, so you can quickly and easily upload, store, and share your
+        files from anywhere in the world.<br/> We pride ourselves on providing
+        top-notch security and protection for your data. Our servers are located
+        in secure data centers and are monitored around the clock to ensure your
+        information is always safe. We also use encryption and other security
+        measures to protect your data from unauthorized access. At our online
+        storage website, we are committed to providing our users with the best
+        possible experience. Our customer support team is available 24/7 to
+        answer any questions or concerns you may have, and we are constantly
+        working to improve our platform and add new features to make your life
+        easier. Thank you for choosing us as your online storage solution. We
+        look forward to serving you and helping you keep your digital life
+        organized and secure.
       </div>
     </div>
   );

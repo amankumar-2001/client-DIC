@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../Store/Slices/userSlice";
+import './pos.css';
 
 function Loginscreen() {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
-  const [loading, setloading] = useState(true);
   
   const dispatch= useDispatch();
 
@@ -27,7 +27,7 @@ function Loginscreen() {
   return (
     <div className="container mt-2">
       <div className="row justify-content-center p-3">
-        <div className="col-md-5">
+        <div className="col-md-5 width">
             <h1>Login</h1>
             <input
               type="email"

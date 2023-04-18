@@ -22,7 +22,7 @@
 }
 
 .btn:hover {
-  background-color: gray;
+  background-color: rgb(87, 87, 87);
 }
 
 .no-back {
@@ -53,4 +53,31 @@
 .aboutText .disc{
   font-size: 1vw;
   
+}
+
+.welcome{
+  animation-name: my-animation;
+  animation-duration: 2s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  
+  font-size: 6rem;
+  position: absolute;
+  left: 0; 
+  right: 0; 
+  margin-left: auto;
+  margin-right: auto; 
+  padding: 3rem;
+}
+
+@keyframes my-animation {
+  from {
+    color: gray;
+    top: 3rem;
+  }
+  to {
+    color: white;
+    top: 8rem;
+  }
 }

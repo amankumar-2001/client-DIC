@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import axios from "axios";
 
-function Add(props) {
+function Edit(params) {
   const [user] = useState(
     JSON.parse(localStorage.getItem("currentUser")).email
   );
@@ -11,20 +11,21 @@ function Add(props) {
 
   async function handleSubmitData() {
     const newData = { user, type, data };
-    if (type !== "Select the Create Type") {
-      try {
-        const result = await axios.post("http://localhost:5000/data", newData);
-        if (result) {
-          props.addData(result);
-          setType("");
-          setData("");
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      alert("Please select the Create type");
-    }
+    // if (type !== "Select the Create Type") {
+    //   try {
+    //     const result = await axios.post("http://localhost:5000/data", newData);
+    //     if (result) {
+    //       setType("");
+    //       setData("");
+    //       const nextURL = "http://localhost:3000/data";
+    //       window.location.assign(nextURL);
+    //     }
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
+    // } else {
+    //   alert("Please select the Create type");
+    // }
   }
   return (
     <div>
@@ -70,13 +71,10 @@ function Add(props) {
                     className="form-control"
                     id="exampleFormControlSelect1"
                     value={type}
+                    disabled
                     onChange={(e) => setType(e.target.value)}
                   >
-                    <option>Select the Create Type</option>
-                    <option>Blog</option>
-                    <option>Form</option>
-                    <option>Notes</option>
-                    <option>Images</option>
+                    <option>{params.data.typeOfData}</option>
                   </select>
                 </div>
                 <div className="form-group">
@@ -89,28 +87,32 @@ function Add(props) {
                     rows="3"
                     value={data}
                     onChange={(e) => setData(e.target.value)}
-                  ></textarea>
+                    placeholder={params.data.data}
+                  >
+                    {params.data.data}
+                  </textarea>
                 </div>
               </form>
             </div>
-            <div className="modal-footer">
+            <div
+              className="modal-footer d-flex row align-self-center"
+              style={{ width: "100%" }}
+            >
               <button
-                type="submit button"
+                type="submit"
                 className="btn btn-primary"
-                onClick={()=>{
-                  setData("");
-                  setType("Select the Create Type");
-                }}
+                onClick={handleSubmitData}
+                style={{ width: "20%" }}
               >
-                Clear All
+                Save
               </button>
               <button
                 type="button"
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
-                onClick={handleSubmitData}
+                style={{ width: "20%" }}
               >
-                Save
+                Discard
               </button>
             </div>
           </div>
@@ -120,4 +122,4 @@ function Add(props) {
   );
 }
 
-export default Add;
+export default Edit;

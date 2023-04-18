@@ -1,34 +1,78 @@
-.operation{
-    color: white;
-    font-size: 5rem;
-    text-align: left;
+.operation {
+  color: white;
+  font-size: 5rem;
+  text-align: left;
+  font-weight: bolder;
+  text-transform: uppercase;
+  background-image: linear-gradient(
+    -225deg,
+    #ffffff 0%,
+    #ffffff 29%,
+    #000000 67%,
+    #909090 100%
+  );
+  background-size: auto auto;
+  background-clip: border-box;
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textclip 2s linear infinite;
 }
 
-.left{
-    margin-left: 3rem;
+@keyframes textclip {
+  to {
+    background-position: 200% center;
+  }
 }
 
-.bg-color{
-   background-color: gray;
-   height: 80%;
-}
-.sign{
-    color: white;
-    font-size: 2rem;
-}
-.link{
-    text-decoration: none;
-    color: white;
+.left {
+  margin-left: 3rem;
 }
 
-.link:hover{
-    color: black;
+.bg-color {
+  background-color: gray;
+  height: 80%;
+}
+.sign {
+  color: white;
+  font-size: 2rem;
+}
+.link {
+  text-decoration: none;
+  color: white;
 }
 
-.sign:hover{
-    cursor: pointer;
-    background-color: gray;
+.link:hover {
+  background-color: gray;
+  color: rgb(255, 255, 255);
 }
-#signIn{
-    background-color: gray;
+
+#signIn {
+  background-color: gray;
+}
+.dashboard{
+  text-decoration: none;
+  color: white;
+}
+
+.dashboard:hover{
+  text-decoration: none;
+  color: rgb(221, 221, 221);
+}
+.sign:hover {
+  cursor: pointer;
+  background: gray;
+}
+
+@media screen and (max-width: 900px) {
+    .operation{
+      font-size: 100px;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .width{
+      width: 100%;
+    }
 }

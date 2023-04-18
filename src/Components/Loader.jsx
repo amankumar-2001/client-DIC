@@ -3,7 +3,7 @@ import PulseLoader from "react-spinners/PulseLoader";
 
 function Loader() {
 
-    let [loading, setLoading] = useState(true);
+    let [loading] = useState(true);
 
     return (
         <div className='text-center alignCenter my-5'>

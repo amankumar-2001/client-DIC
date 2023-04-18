@@ -23,7 +23,7 @@ function Registerscreen() {
   return (
     <div className="container mt-2">
       <div className="row justify-content-center p-3">
-        <div className="col-md-5">
+        <div className="col-md-5 width">
           <div className="bs padding">
             <h1>Register</h1>
             <input
