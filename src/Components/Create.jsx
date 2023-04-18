@@ -93,14 +93,18 @@ function Add(props) {
                 </div>
               </form>
             </div>
-            <div className="modal-footer">
+            <div
+              className="modal-footer d-flex row align-self-center"
+              style={{ width: "100%" }}
+            >
               <button
                 type="submit button"
                 className="btn btn-primary"
-                onClick={()=>{
+                onClick={() => {
                   setData("");
                   setType("Select the Create Type");
                 }}
+                style={{ width: "20%" }}
               >
                 Clear All
               </button>
@@ -109,6 +113,7 @@ function Add(props) {
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
                 onClick={handleSubmitData}
+                style={{ width: "20%" }}
               >
                 Save
               </button>
