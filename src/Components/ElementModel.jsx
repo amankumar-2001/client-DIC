@@ -18,7 +18,7 @@ function ElementModel() {
       });
 
       setResult(getResult.data);
-      console.log(result);
+      
       setCreatedDate(getResult.data.createdAt.substring(0, 10));
       setUpdatedDate(getResult.data.updatedAt.substring(0, 10));
     } catch (err) {
@@ -34,7 +34,7 @@ function ElementModel() {
     <>
       <div className="container main">
         <div className="container profile-data">
-          {show && <Edit data={result}/>}
+          {show && <Edit data={result} />}
           <div className="d-flex flex-col">
             <div>
               <b>User: </b>
@@ -62,18 +62,7 @@ function ElementModel() {
           style={{ height: "100%", width: "100%" }}
         >
           <div className="container" style={{ height: "85%" }}>
-            right Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
-            rerum maxime asperiores nesciunt eum nemo quasi, id magni modi,
-            natus perspiciatis et provident veritatis, iste placeat ipsa quaerat
-            sequi cumque nam dolorem hic mollitia similique! Nulla eaque, quod
-            quia praesentium cum eum nemo fugiat quidem rem, aspernatur odio ad
-            autem. Distinctio amet blanditiis, porro dignissimos, repellat
-            incidunt harum magnam cupiditate minus quibusdam rem officia odit
-            sequi! Cupiditate, fugiat magnam. Et, quibusdam ut. Et adipisci
-            quae, deleniti rerum asperiores voluptatum vel beatae, ratione
-            facere praesentium sapiente deserunt. Reprehenderit, unde
-            laboriosam. Voluptatem ad ex nobis quis velit doloribus doloremque
-            odit minus voluptates!
+            {result.data}
           </div>
           <div
             className="container d-flex col-reverse justify-content-end"
@@ -84,7 +73,7 @@ function ElementModel() {
               style={{ width: "10%" }}
               data-bs-toggle="modal"
               data-bs-target="#staticBackdrop"
-              onClick={()=>setShow(true)}
+              onClick={() => setShow(true)}
             >
               Edit
             </button>

@@ -7,7 +7,7 @@ function Edit(params) {
     JSON.parse(localStorage.getItem("currentUser")).email
   );
   const [type, setType] = useState("Select the Create Type");
-  const [data, setData] = useState("");
+  const [data, setData] = useState(params.data.data);
 
   async function handleSubmitData() {
     const newData = { user, type, data };
@@ -42,7 +42,7 @@ function Edit(params) {
           <div className="modal-content">
             <div className="modal-header">
               <h1 className="modal-title fs-5" id="staticBackdropLabel">
-                Create Data
+                Edit Data
               </h1>
               <button
                 type="button"
@@ -87,9 +87,8 @@ function Edit(params) {
                     rows="3"
                     value={data}
                     onChange={(e) => setData(e.target.value)}
-                    placeholder={params.data.data}
                   >
-                    {params.data.data}
+                    {data}
                   </textarea>
                 </div>
               </form>
