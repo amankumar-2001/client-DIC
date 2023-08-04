@@ -14,7 +14,7 @@ function Loginscreen() {
       const findUser = {email, password};
       try {
         console.log(findUser);
-        const result = await axios.post("http://localhost:5000/users/login",findUser);
+        const result = await axios.post("https://deep-into-crud.vercel.app/users/login",findUser);
       
         dispatch(loginUser(result.data));
         window.localStorage.setItem("currentUser", JSON.stringify(result.data));

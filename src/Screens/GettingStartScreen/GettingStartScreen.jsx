@@ -42,7 +42,7 @@ function GettingStartScreen() {
     try {
       setloading(true);
       const getResult1 = await (
-        await axios.get("http://localhost:5000/data")
+        await axios.get("https://deep-into-crud.vercel.app/data")
       ).data;
 
       const getResult2 = getResult1.filter((data) => {

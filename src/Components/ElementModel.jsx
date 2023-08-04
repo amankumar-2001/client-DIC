@@ -13,7 +13,7 @@ function ElementModel() {
 
   const getData = async () => {
     try {
-      let getResult = await axios.post("http://localhost:5000/data/dataById", {
+      let getResult = await axios.post("https://deep-into-crud.vercel.app/data/dataById", {
         dataId,
       });
 

@@ -13,7 +13,7 @@ function Add(props) {
     const newData = { user, type, data };
     if (type !== "Select the Create Type") {
       try {
-        const result = await axios.post("http://localhost:5000/data", newData);
+        const result = await axios.post("https://deep-into-crud.vercel.app/data", newData);
         if (result) {
           props.addData(result);
           setType("");

@@ -11,7 +11,7 @@ function Registerscreen() {
     if (password === cpassword) {
       const newUser = { name, email, password, cpassword };
       try {
-        const result = await axios.post("http://localhost:5000/users/register", newUser);
+        const result = await axios.post("https://deep-into-crud.vercel.app/users/register", newUser);
         if(result)
            window.location.href = "/users/login"; 
       } catch (err) {

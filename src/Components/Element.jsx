@@ -17,7 +17,7 @@ function Element(params) {
           onClick: async () => {
             try {
               await axios.delete(
-                `http://localhost:5000/data/delete/${params.item._id}`
+                `https://deep-into-crud.vercel.app/data/delete/${params.item._id}`
               );
               params.deleteId(params.item._id);
             } catch (error) {
