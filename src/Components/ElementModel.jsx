@@ -3,22 +3,34 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./elementModel.css";
 import Edit from "./Edit";
+import styled from "styled-components";
+
+const Container = styled.div`
+  display: flex;
+  margin-top: 10px;
+  align-items: center;
+  flex-direction: column;
+  background-color: rgb(204, 204, 204);
+`;
 
 function ElementModel() {
   const dataId = useParams().dataId;
   const [result, setResult] = useState({});
-  const [createdDate,setCreatedDate]=useState("");
-  const [updatedDate,setUpdatedDate] = useState("");
-  const [show, setShow]=useState(false);
+  const [createdDate, setCreatedDate] = useState("");
+  const [updatedDate, setUpdatedDate] = useState("");
+  const [show, setShow] = useState(false);
 
   const getData = async () => {
     try {
-      let getResult = await axios.post("https://deep-into-crud.vercel.app/data/dataById", {
-        dataId,
-      });
+      let getResult = await axios.post(
+        "https://deep-into-crud.vercel.app/data/dataById",
+        {
+          dataId,
+        }
+      );
 
       setResult(getResult.data);
-      
+
       setCreatedDate(getResult.data.createdAt.substring(0, 10));
       setUpdatedDate(getResult.data.updatedAt.substring(0, 10));
     } catch (err) {
@@ -28,7 +40,7 @@ function ElementModel() {
 
   useEffect(() => {
     getData();
-  },[]);
+  }, []);
 
   return (
     <>
