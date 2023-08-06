@@ -1,15 +1,16 @@
 import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Loginscreen from "../LoginScreen";
-import Registerscreen from "../RegisterScreen";
+import LoginScreen from "../LoginScreen";
+import Loader from "../../Components/Loader";
+import RegisterScreen from "../RegisterScreen";
 import "./Homescreen.css";
 
 function HomeScreen() {
   const [sign, setSign] = useState(1);
-  const [user] = useState(
-    JSON.parse(localStorage.getItem("currentUser"))
-  );
+  const [loading, setLoading] = useState(false);
+
+  const [user] = useState(JSON.parse(localStorage.getItem("currentUser")));
 
   function signIn() {
     setSign(1);
@@ -29,6 +30,7 @@ function HomeScreen() {
 
   return (
     <div className="container mt-5">
+      {loading && <Loader size={20} />}
       <div className="d-flex justify-content-between p-4 bg-black shadow-lg bar-wrap">
         <div className="container left border-end">
           <div className="operation">Create</div>
@@ -50,21 +52,29 @@ function HomeScreen() {
               <div className="border-bottom login d-flex pt-3 justify-content-between">
                 <div
                   id="signIn"
-                  className="container sign border-end"
+                  className="container sign border-end link"
                   onClick={signIn}
                 >
                   <Link to="/users/login" className="link">
                     Login
                   </Link>
                 </div>
-                <div id="signUp" className="container sign" onClick={signUp}>
+                <div
+                  id="signUp"
+                  className="container sign link"
+                  onClick={signUp}
+                >
                   <Link to="/users/register" className="link">
                     SignUp
                   </Link>
                 </div>
               </div>
               <div className="continer bg-color">
-                {sign ? <Loginscreen /> : <Registerscreen />}
+                {sign ? (
+                  <LoginScreen setLoading={setLoading} />
+                ) : (
+                  <RegisterScreen setLoading={setLoading}/>
+                )}
               </div>
             </>
           )}
