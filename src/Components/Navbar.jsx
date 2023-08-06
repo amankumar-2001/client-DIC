@@ -1,19 +1,14 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import styled from "styled-components";
-
-const DropdownButton = styled.button`
-  padding-left: 1rem;
-  padding-right: 1rem;
-  background: none;
-  border: none;
-`;
+import {Link, useNavigate } from "react-router-dom";
+import "./nav.css";
 
 function Navbar() {
   const navigate = useNavigate();
-  const [user] = useState(JSON.parse(localStorage.getItem("currentUser")));
-
-  function logOut() {
+  const [user] = useState(
+    JSON.parse(localStorage.getItem("currentUser"))
+  );
+  
+  function logOut(){
     localStorage.removeItem("currentUser");
     navigate("/");
   }
@@ -56,25 +51,25 @@ function Navbar() {
           {user && (
             <>
               <div className="btn-group">
-                <DropdownButton
+                <button
                   type="button"
-                  className="btn btn-secondary dropdown-toggle no-back"
+                  className="btn btn-secondary dropdown-toggle no-back drpdown"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
                   {user.name}
-                </DropdownButton>
+                </button>
                 <ul className="dropdown-menu dropdown-menu-end dropdown-menu-dark">
                   <li>
                     <button className="dropdown-item" type="button">
-                      Profile
+                      Action
                     </button>
                   </li>
-                  {/* <li>
+                  <li>
                     <button className="dropdown-item" type="button">
                       Another action
                     </button>
-                  </li> */}
+                  </li>
                   <li>
                     <hr className="dropdown-divider" />
                   </li>

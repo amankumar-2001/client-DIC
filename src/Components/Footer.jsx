@@ -1,23 +1,13 @@
 import React from "react";
-import styled from "styled-components";
-
-const FooterDiv = styled.div`
-  color: white;
-  text-align: center;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: rgb(0, 0, 0);
-`;
+import "./footer.css";
 
 function Footer() {
   return (
-    <FooterDiv>
+    <div className="bootm">
       <footer className="py-1">
-        <p>&copy; 2022 Apcode15, Inc. All rights reserved.</p>
+          <p>&copy; 2022 Apcode15, Inc. All rights reserved.</p>
       </footer>
-    </FooterDiv>
+     </div>
   );
 }
 

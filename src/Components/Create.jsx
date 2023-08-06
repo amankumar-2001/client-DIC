@@ -1,7 +1,6 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
-import ErrorModal from "./ErrorModal";
 
 function Add(props) {
   const [user] = useState(
@@ -9,25 +8,24 @@ function Add(props) {
   );
   const [type, setType] = useState("Select the Create Type");
   const [data, setData] = useState("");
-  const [error, setError] = useState("");
 
-  const handleSubmitData = async () => {
+  async function handleSubmitData() {
     const newData = { user, type, data };
-    try {
-      const result = await axios.post(
-        "https://deep-into-crud.vercel.app/data",
-        newData
-      );
-      if (result) {
-        props.addData(result);
-        setType("");
-        setData("");
+    if (type !== "Select the Create Type") {
+      try {
+        const result = await axios.post("https://deep-into-crud.vercel.app/data", newData);
+        if (result) {
+          props.addData(result);
+          setType("");
+          setData("");
+        }
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
+    } else {
+      alert("Please select the Create type");
     }
-  };
-
+  }
   return (
     <div>
       <div
@@ -52,7 +50,6 @@ function Add(props) {
                 aria-label="Close"
               ></button>
             </div>
-            {error && <ErrorModal errorMessage={error} />}
             <div className="modal-body">
               <form>
                 <div className="form-group">
@@ -115,13 +112,7 @@ function Add(props) {
                 type="button"
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
-                onClick={() => {
-                  if (type !== "Select the Create Type") {
-                    handleSubmitData();
-                  } else {
-                    setError("Please select the Create type");
-                  }
-                }}
+                onClick={handleSubmitData}
                 style={{ width: "20%" }}
               >
                 Save

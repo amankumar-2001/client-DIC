@@ -1,9 +1,11 @@
 .size {
   width: 14rem;
   margin: 1rem;
-  transition: all 0s ease-in-out; 
 }
 
+.size { 
+  transition: all 0s ease-in-out; 
+}
 .size:hover { 
   transform: scale(1.05); 
 }
