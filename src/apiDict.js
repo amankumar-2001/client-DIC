@@ -1,6 +1,6 @@
-// const remoteUrl = "https://deep-into-crud.vercel.app/driveDIC";
-const localUrl = "http://localhost:5001/driveDIC";
-const url = localUrl;
+const remoteUrl = "https://deep-into-crud.vercel.app/driveDIC";
+// const localUrl = "http://localhost:5001/driveDIC";
+const url = remoteUrl;
 
 export const getUserUrl = ({ email, password }) => {
   return `${url}/login/user?email=${email}&password=${password}`;
