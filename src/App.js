@@ -11,6 +11,7 @@ import HomeScreen from './Screens/Homescreen/HomeScreen';
 import GettingStartScreen from './Screens/GettingStartScreen/GettingStartScreen';
 import ContactScreen from './Screens/ContactScreen';
 import LandingScreen from './Screens/LandingScreen';
+import ProfilePage from './Screens/ProfilePage';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/users/login" exact element={<HomeScreen />} />
           <Route path="/users/register" exact element={<HomeScreen />} />
           <Route path="/data" exact element={<GettingStartScreen/>} />
+          <Route path="/profile" exact element={<ProfilePage/>} />
           <Route path="/data/addData" exact element={<GettingStartScreen />} />
         </Routes>
         <Footer/>

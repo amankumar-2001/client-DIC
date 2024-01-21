@@ -66,7 +66,9 @@ function Navbar() {
                 </DropdownButton>
                 <ul className="dropdown-menu dropdown-menu-end dropdown-menu-dark">
                   <li>
-                    <button className="dropdown-item" type="button">
+                    <button className="dropdown-item" type="button" onClick={()=>{
+                      navigate("/profile");
+                    }}>
                       Profile
                     </button>
                   </li>

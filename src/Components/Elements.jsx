@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { IoMdDownload } from "react-icons/io";
 import { FaSave } from "react-icons/fa";
@@ -68,10 +67,6 @@ const CardImage = styled.img`
 
 const CardContent = styled.div`
   padding: 16px;
-`;
-
-const CardTitle = styled.h2`
-  font-size: 1.5rem;
 `;
 
 const CardText = styled.p`
