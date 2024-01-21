@@ -1,6 +1,6 @@
 /* width */
 ::-webkit-scrollbar {
-  width: 1rem;
+  width: 0.5rem;
 }
 
 /* Track */
@@ -28,4 +28,5 @@
   background-size: cover;
   text-align: center;
   height: 100vh;
+  min-width: 1000px;
 }

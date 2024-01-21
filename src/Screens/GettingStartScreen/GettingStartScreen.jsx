@@ -1,61 +1,64 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Element from "../../Components/Element";
+import {
+  ImageCard,
+  FileCard,
+  BlogCard,
+  NoteCard,
+} from "../../Components/Elements";
 import "./GettingStartscreen.css";
 import Create from "../../Components/Create";
 import axios from "axios";
+import { confirmAlert } from "react-confirm-alert";
 import Loader from "../../Components/Loader";
 import ErrorModal from "../../Components/ErrorModal";
+import { editDataUrl, getDataUrl } from "../../apiDict";
+import { styled } from "styled-components";
+
+const Container = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+const BlockTitle = styled.h2`
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  color: black;
+  text-align: left;
+`;
 
 function GettingStartScreen() {
   const navigate = useNavigate();
-  const [render, setRender] = useState(true);
   const [createModal, setCreateModal] = useState("");
-  const [info, setInfo] = useState();
   const [loading, setLoading] = useState([]);
   const [result, setResult] = useState([]);
+  const [error, setError] = useState("");
   const [user] = useState(JSON.parse(localStorage.getItem("currentUser")));
-  const allType = ["All", "Blog", "Images", "Form", "Notes"];
+  const allType = ["All", "Blogs", "Images", "Files", "Notes"];
 
-  const deleteById = (getId) => {
-    const newResult = result.filter((value) => {
-      return value._id !== getId;
-    });
-
-    setLoading(true);
-    setResult(newResult);
-    setInfo(newResult);
-    setLoading(false);
-  };
-
-  function addData(newData) {
-    const newResult = result;
-    newResult.push(newData.data);
-
-    render ? setRender(false) : setRender(true);
-    setLoading(true);
-    setResult(newResult);
-    setInfo(newResult);
-    setLoading(false);
-  }
-
-  const getData = async () => {
+  const getData = async ({ typeOfData, userId }) => {
     try {
       setLoading(true);
-      const data = await axios.get("https://deep-into-crud.vercel.app/data", {
-        user: user.email,
-      });
+      const response = await axios.get(
+        getDataUrl({
+          typeOfData,
+          userId,
+        })
+      );
 
-      setResult(data?.data);
-      setInfo(data?.data);
-      setLoading(false);
+      if (response.data.ok && response.data.res.ok) {
+        setResult(response.data.res.data);
+        setLoading(false);
+      } else {
+        setError(response.data.message || response.data.res.err);
+      }
     } catch (err) {
-      console.log(err);
+      setError(err);
     }
   };
 
-  function filterByType(val) {
+  const filterByType = (val) => {
     allType.forEach((typeId) => {
       let path = document.getElementById(typeId);
       if (typeId === val) {
@@ -67,73 +70,106 @@ function GettingStartScreen() {
       }
     });
 
-    setInfo();
-    if (val === "All") {
-      setInfo(result);
-    } else {
-      const temp = result.filter((value) => {
-        return value.typeOfData === val;
+    getData({
+      typeOfData: val.endsWith("s") ? val.slice(0, -1) : "",
+      userId: user._id,
+    });
+  };
+
+  const handleDelete = async ({ contentId, typeOfData, data, toDelete }) => {
+    confirmAlert({
+      title: "Delete!!",
+      message: "Are you sure, You want to delete this?",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: async () => {
+            try {
+              await axios.post(editDataUrl, {
+                userId: user._id,
+                contentId,
+                typeOfData,
+                data,
+                toDelete,
+              });
+              getData({ typeOfData: "", userId: user._id });
+            } catch (error) {
+              setError(error);
+            }
+          },
+        },
+        {
+          label: "No",
+          onClick: () => {},
+        },
+      ],
+    });
+  };
+
+  const handleEdit = async ({ contentId, typeOfData, data, toDelete }) => {
+    try {
+      await axios.post(editDataUrl, {
+        userId: user._id,
+        contentId,
+        typeOfData,
+        data,
+        toDelete,
       });
-      setInfo(temp);
+      getData({ typeOfData: "", userId: user._id });
+    } catch (error) {
+      setError(error);
     }
-  }
+  };
+
+  const handleDownload = async ({ publicUrl, fileName }) => {
+    try {
+      const response = await axios({
+        url: publicUrl,
+        method: "GET",
+        responseType: "blob",
+      });
+
+      const urlObject = window.URL || window.webkitURL;
+      const blob = new Blob([response.data]);
+      const downloadUrl = urlObject.createObjectURL(blob);
+
+      const downloadEvent = document.createElement("a");
+      downloadEvent.href = downloadUrl;
+      downloadEvent.download = fileName;
+
+      document.body.appendChild(downloadEvent);
+      downloadEvent.click();
+      document.body.removeChild(downloadEvent);
+    } catch (error) {
+      setError("Error downloading file:", error);
+    }
+  };
 
   useEffect(() => {
-    if (!result) navigate("/");
-    getData();
-  }, [render]);
+    if (createModal === "") {
+      getData({ typeOfData: "", userId: user._id });
+    }
+  }, [createModal]);
 
   return (
-    <div className="continer mt-4">
+    <div className="container mt-4">
+      {error && <ErrorModal errorMessage={error} />}
       <div className="container shadow-lg p-3 bg-white rounded">
         <h1 className="title">CRUD Dashboard</h1>
-
         <div className="border-bottom border-dark d-flex justify-content-start">
-          <button
-            id="All"
-            className="px-4 py-1 btn2 element border-end border-dark"
-            onClick={() => {
-              filterByType("All");
-            }}
-          >
-            All
-          </button>
-          <button
-            id="Blog"
-            className="px-4 py-1 btn2 element border-end border-dark"
-            onClick={() => {
-              filterByType("Blog");
-            }}
-          >
-            Blog
-          </button>
-          <button
-            id="Images"
-            className="px-4 py-1 btn2 element border-end border-dark"
-            onClick={() => {
-              filterByType("Images");
-            }}
-          >
-            Image
-          </button>
-          <button
-            id="Form"
-            className="px-4 py-1 btn2 element border-end border-dark"
-            onClick={() => {
-              filterByType("Form");
-            }}
-          >
-            Form
-          </button>
-          <button
-            id="Notes"
-            className="px-4 py-1 btn2 element border-end border-dark"
-            onClick={() => {
-              filterByType("Notes");
-            }}
-          >
-            Notes
-          </button>
+          {allType.map((block) => {
+            return (
+              <button
+                id={block}
+                className="px-4 py-1 btn2 element border-end border-dark"
+                onClick={() => {
+                  filterByType(block);
+                }}
+              >
+                {block}
+              </button>
+            );
+          })}
           <button
             className="px-4 py-1 btn2 element"
             data-bs-toggle="modal"
@@ -143,21 +179,73 @@ function GettingStartScreen() {
             Add
           </button>
         </div>
-        <div className="outter mt-2">
-          <div className="d-flex flex-wrap justify-content-start">
+        <div className="outer mt-2">
+          <div className="d-flex" style={{ flexDirection: "column" }}>
             {loading ? (
               <div className="container">
                 <Loader size={20} />
               </div>
             ) : (
-              info.map((value, i) => {
-                return <Element item={value} key={i} deleteById={deleteById} />;
+              ["Note", "File", "Image", "Blog"].map((block) => {
+                return (
+                  <>
+                    {result[block].length > 0 && (
+                      <BlockTitle>{block}s:</BlockTitle>
+                    )}
+                    <Container>
+                      {result[block].map(
+                        ({ data, metaData, typeOfData, contentId }, i) => {
+                          return block === "Image" ? (
+                            <ImageCard
+                              key={i}
+                              handleDelete={handleDelete}
+                              data={data}
+                              metaData={metaData}
+                              typeOfData={typeOfData}
+                              contentId={contentId}
+                              onClick={() => {}}
+                            />
+                          ) : block === "File" ? (
+                            <FileCard
+                              key={i}
+                              handleDelete={handleDelete}
+                              data={data}
+                              metaData={metaData}
+                              typeOfData={typeOfData}
+                              contentId={contentId}
+                              handleDownload={handleDownload}
+                            />
+                          ) : block === "Blog" ? (
+                            <BlogCard
+                              key={i}
+                              handleDelete={handleDelete}
+                              data={data}
+                              metaData={metaData}
+                              typeOfData={typeOfData}
+                              contentId={contentId}
+                            />
+                          ) : (
+                            <NoteCard
+                              key={i}
+                              handleDelete={handleDelete}
+                              data={data}
+                              metaData={metaData}
+                              typeOfData={typeOfData}
+                              contentId={contentId}
+                              handleEdit={handleEdit}
+                            />
+                          );
+                        }
+                      )}
+                    </Container>
+                  </>
+                );
               })
             )}
           </div>
         </div>
       </div>
-      {createModal && <Create addData={addData} />}
+      {createModal && <Create show={setCreateModal} />}
     </div>
   );
 }

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ErrorModal from "../Components/ErrorModal";
 import SuccessModal from "../Components/SuccessModal";
+import { registerUserUrl } from "../apiDict";
 
 function RegisterScreen({ setLoading }) {
   const [name, setName] = useState("");
@@ -13,38 +14,38 @@ function RegisterScreen({ setLoading }) {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
-  const registerUser = async (newUser) => {
+  const registerUser = async () => {
     try {
-      const result = await axios.post(
-        "https://deep-into-crud.vercel.app/users/register",
-        newUser
-      );
+      const response = await axios.post(registerUserUrl, {
+        name,
+        email,
+        password,
+      });
+      if (response.data.ok) {
+        if (response.data.res.ok) {
+          setSuccess(true);
+        } else {
+          setError(response.data.res.err);
+        }
+      } else {
+        setError(response.data.message);
+      }
       setLoading(false);
-      result && setSuccess(true);
     } catch (err) {
       setError(err?.response?.data?.message);
     }
   };
 
-  const checkUserAlreadyExist = async () => {
-    const newUser = { name, email, password, cPassword };
-    try {
-      setLoading(true);
-      const findUser = await axios.get(
-        "https://deep-into-crud.vercel.app/users/find",
-        newUser
-      );
-  
-      if (findUser?.data?.email) {
-        setLoading(false);
-        setError("User Already exist!! Use another Email");
-      } else {
-        registerUser(newUser);
-      }
-    } catch (err) {
-      setError(err?.response?.data?.message);
+  useEffect(() => {
+    if (success || error) {
+      const intervalId = setInterval(() => {
+        setSuccess(false);
+        setError(false);
+      }, 3000);
+
+      return () => clearInterval(intervalId);
     }
-  };
+  }, [success, error]);
 
   return (
     <div className="container mt-2">
@@ -52,8 +53,13 @@ function RegisterScreen({ setLoading }) {
         <div className="col-md-5 width">
           <div className="bs padding">
             <h1>Register</h1>
-            {error && <ErrorModal errorMessage={error} />}
-            {success && <SuccessModal successMessage={"Successfully Registered"}/>}
+            {error ? (
+              <ErrorModal errorMessage={error} />
+            ) : success ? (
+              <SuccessModal successMessage={"Successfully Registered"} />
+            ) : (
+              <></>
+            )}
             <input
               type="text"
               className="form-control mt-2"
@@ -99,7 +105,7 @@ function RegisterScreen({ setLoading }) {
               className="btn-primary btn"
               onClick={() => {
                 password === cPassword
-                  ? checkUserAlreadyExist()
+                  ? registerUser()
                   : setError("Password Not Matched...");
               }}
             >

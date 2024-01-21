@@ -29,7 +29,7 @@ function HomeScreen() {
   }
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 minWidth">
       {loading && <Loader size={20} />}
       <div className="d-flex justify-content-between p-4 bg-black shadow-lg bar-wrap">
         <div className="container left border-end">
@@ -69,11 +69,11 @@ function HomeScreen() {
                   </Link>
                 </div>
               </div>
-              <div className="continer bg-color">
+              <div className="container bg-color">
                 {sign ? (
                   <LoginScreen setLoading={setLoading} />
                 ) : (
-                  <RegisterScreen setLoading={setLoading}/>
+                  <RegisterScreen setLoading={setLoading} />
                 )}
               </div>
             </>

@@ -43,8 +43,11 @@
   color: white;
 }
 
+.minWidth{
+  min-width: 1000px;
+}
+
 .link:hover {
-  background-color: gray;
   color: rgb(255, 255, 255);
 }
 
@@ -63,12 +66,6 @@
 .sign:hover {
   cursor: pointer;
   background: gray;
-}
-
-@media screen and (max-width: 900px) {
-    .operation{
-      font-size: 100px;
-    }
 }
 
 @media screen and (max-width: 1200px) {

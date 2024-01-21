@@ -1,132 +1,169 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
 import ErrorModal from "./ErrorModal";
+import { styled } from "styled-components";
+import { saveDataUrl } from "../apiDict";
+import Loader from "./Loader";
 
-function Add(props) {
-  const [user] = useState(
-    JSON.parse(localStorage.getItem("currentUser")).email
-  );
+const ImageComponent = styled.input`
+  width: 100%;
+  margin: 12px 0px 0px 0px;
+`;
+
+const SubmitButton = styled.button`
+  display: inline-block;
+  margin-top: 12px;
+  padding: 7px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  color: white;
+  border-radius: 7px;
+  width: 100%;
+  background-color: black;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+
+  &:hover {
+    background-color: grey;
+    color: black;
+  }
+`;
+
+function Add({ show }) {
+  const [user] = useState(JSON.parse(localStorage.getItem("currentUser")));
   const [type, setType] = useState("Select the Create Type");
   const [data, setData] = useState("");
   const [error, setError] = useState("");
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmitData = async () => {
-    const newData = { user, type, data };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("userId", user._id);
+    formData.append("typeOfData", type);
+    formData.append("data", data);
+    formData.append("file", file);
+
     try {
-      const result = await axios.post(
-        "https://deep-into-crud.vercel.app/data",
-        newData
-      );
-      if (result) {
-        props.addData(result);
-        setType("");
-        setData("");
+      setLoading(true);
+      const response = await axios.post(saveDataUrl, formData);
+
+      if (response.data.ok && response.data.res.ok) {
+        show("");
+        const closeButton = document.querySelector(
+          'button.btn-close[data-bs-dismiss="modal"][aria-label="Close"]'
+        );
+        if (closeButton) {
+          closeButton.click();
+        } else {
+          console.error("Button not found");
+        }
+      } else {
+        setError(response.data.message || "Please enter valid Data");
       }
-    } catch (err) {
-      console.log(err);
+      setLoading(false);
+    } catch (error) {
+      setError(error);
     }
   };
 
+  useEffect(() => {
+    if (error) {
+      const intervalId = setInterval(() => {
+        setError(false);
+      }, 3000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [error]);
+
   return (
-    <div>
-      <div
-        className="modal fade"
-        id="staticBackdrop"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-        tabindex="-1"
-        aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="staticBackdropLabel">
-                Create Data
-              </h1>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            {error && <ErrorModal errorMessage={error} />}
-            <div className="modal-body">
-              <form>
+    <div
+      className="modal fade"
+      id="staticBackdrop"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true"
+    >
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h1 className="modal-title fs-5" id="staticBackdropLabel">
+              Create Data
+            </h1>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          {error && <ErrorModal errorMessage={error} />}
+          <div className="modal-body">
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>User</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  id="emailInput"
+                  placeholder={user.email}
+                  disabled
+                />
+              </div>
+              <div className="form-group">
+                <label>Select Create Type</label>
+                <select
+                  className="form-control"
+                  id="FormControlSelect1"
+                  value={type}
+                  onChange={(e) => setType(e.target.value)}
+                >
+                  <option>Select the Create Type</option>
+                  <option>Blog</option>
+                  <option>File</option>
+                  <option>Note</option>
+                  <option>Image</option>
+                </select>
+              </div>
+              {type === "File" || type === "Image" || type === "Blog" ? (
+                <ImageComponent
+                  type="file"
+                  className="form-control"
+                  id="fileInput"
+                  onChange={(e) => setFile(e.target.files[0])}
+                />
+              ) : (
+                <></>
+              )}
+              {type === "Note" || type === "Blog" ? (
                 <div className="form-group">
-                  <label for="exampleFormControlInput1">User</label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="exampleFormControlInput1"
-                    placeholder={user}
-                    disabled
-                  />
-                </div>
-                <div className="form-group">
-                  <label for="exampleFormControlSelect1">
-                    Select Create Type
-                  </label>
-                  <select
-                    className="form-control"
-                    id="exampleFormControlSelect1"
-                    value={type}
-                    onChange={(e) => setType(e.target.value)}
-                  >
-                    <option>Select the Create Type</option>
-                    <option>Blog</option>
-                    <option>Form</option>
-                    <option>Notes</option>
-                    <option>Images</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label for="exampleFormControlTextarea1">
+                  <label htmlFor="FormControlTextarea1">
                     Additional Information
                   </label>
                   <textarea
                     className="form-control"
-                    id="exampleFormControlTextarea1"
+                    id="FormControlTextarea1"
                     rows="3"
                     value={data}
                     onChange={(e) => setData(e.target.value)}
                   ></textarea>
                 </div>
-              </form>
-            </div>
-            <div
-              className="modal-footer d-flex row align-self-center"
-              style={{ width: "100%" }}
-            >
-              <button
-                type="submit button"
-                className="btn btn-primary"
-                onClick={() => {
-                  setData("");
-                  setType("Select the Create Type");
-                }}
-                style={{ width: "20%" }}
-              >
-                Clear All
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-                onClick={() => {
-                  if (type !== "Select the Create Type") {
-                    handleSubmitData();
-                  } else {
-                    setError("Please select the Create type");
-                  }
-                }}
-                style={{ width: "20%" }}
-              >
-                Save
-              </button>
-            </div>
+              ) : (
+                <></>
+              )}
+              <SubmitButton type="submit" disabled={loading}>
+                {loading ? <Loader size={"5px"} color={"white"} /> : "Submit"}
+              </SubmitButton>
+            </form>
           </div>
         </div>
       </div>

@@ -1,21 +1,28 @@
-import React , {useState} from 'react'
+import React, { useState } from "react";
 import PulseLoader from "react-spinners/PulseLoader";
+import styled from "styled-components";
 
-function Loader({size}) {
-    let [loading] = useState(true);
-    return (
-        <div className='text-center alignCenter my-5'>
-            <div className="sweet-loading filter m-1">
-                <PulseLoader
-                    color='#000'
-                    loading={loading}
-                    size={size || 40}
-                    aria-label="Loading Spinner"
-                    data-testid="loader"
-                />
-            </div>
-        </div>
-    )
+const CustomLoaderContainer = styled.div`
+  text-align: center;
+  align-items: center;
+  margin-bottom: ${({ margin }) => margin};
+`;
+
+function Loader({ size, color, margin = 5 }) {
+  let [loading] = useState(true);
+  return (
+    <CustomLoaderContainer margin={margin}>
+      <div className="sweet-loading filter m-1">
+        <PulseLoader
+          color={color || "#000"}
+          loading={loading}
+          size={size || 40}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+      </div>
+    </CustomLoaderContainer>
+  );
 }
 
-export default Loader
+export default Loader;

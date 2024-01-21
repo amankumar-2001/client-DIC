@@ -1,30 +1,32 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../Store/Slices/userSlice";
 import ErrorModal from "../Components/ErrorModal";
 import "./pos.css";
+import { getUserUrl } from "../apiDict";
 
 function LoginScreen({ setLoading }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const checkUser = async () => {
-    const userToFind = { email, password };
     try {
       setLoading(true);
-      const result = await axios.post(
-        "https://deep-into-crud.vercel.app/users/login",
-        userToFind
+      const response = await axios.get(
+        getUserUrl({
+          email,
+          password,
+        })
       );
-
-      // dispatch(loginUser(result.data));
-      window.localStorage.setItem("currentUser", JSON.stringify(result.data));
-      navigate("/data");
+      if (response.data.ok && response.data.res.ok) {
+        window.localStorage.setItem(
+          "currentUser",
+          JSON.stringify(response.data.res.data)
+        );
+        navigate("/data");
+      }
       setLoading(false);
     } catch (err) {
       setLoading(false);

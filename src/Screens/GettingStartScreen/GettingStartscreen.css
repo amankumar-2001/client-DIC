@@ -8,7 +8,7 @@
     background-color: grey;
 }
 
-.outter{
+.outer{
     display: block;
     overflow-y: scroll;
     height: 60vh;
