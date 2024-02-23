@@ -5,6 +5,7 @@ import ErrorModal from "./ErrorModal";
 import { styled } from "styled-components";
 import { saveDataUrl } from "../apiDict";
 import Loader from "./Loader";
+import { useNavigate } from "react-router-dom";
 
 const ImageComponent = styled.input`
   width: 100%;
@@ -33,34 +34,40 @@ const SubmitButton = styled.button`
   }
 `;
 
-function Add({ show }) {
+function Add({ setShow, onClose }) {
   const [user] = useState(JSON.parse(localStorage.getItem("currentUser")));
   const [type, setType] = useState("Select the Create Type");
   const [data, setData] = useState("");
   const [error, setError] = useState("");
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("userId", user._id);
+    formData.append("userId", user.userId);
     formData.append("typeOfData", type);
     formData.append("data", data);
     formData.append("file", file);
 
     try {
       setLoading(true);
+      axios.defaults.withCredentials = true;
       const response = await axios.post(saveDataUrl, formData);
 
-      if (response.data.ok && response.data.res.ok) {
-        show("");
+      if (!response?.ok && response?.tokenError) {
+        navigate("/contact");
+      }
+      if (response.data && response.data.ok) {
+        setShow("");
         const closeButton = document.querySelector(
           'button.btn-close[data-bs-dismiss="modal"][aria-label="Close"]'
         );
         if (closeButton) {
           closeButton.click();
+          onClose();
         } else {
           console.error("Button not found");
         }
@@ -89,7 +96,7 @@ function Add({ show }) {
       id="staticBackdrop"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
-      tabindex="-1"
+      tabIndex="-1"
       aria-labelledby="staticBackdropLabel"
       aria-hidden="true"
     >

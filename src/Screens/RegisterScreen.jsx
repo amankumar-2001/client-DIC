@@ -21,12 +21,8 @@ function RegisterScreen({ setLoading }) {
         email,
         password,
       });
-      if (response.data.ok) {
-        if (response.data.res.ok) {
-          setSuccess(true);
-        } else {
-          setError(response.data.res.err);
-        }
+      if (response.data && response.data.ok) {
+        setSuccess(true);
       } else {
         setError(response.data.message);
       }

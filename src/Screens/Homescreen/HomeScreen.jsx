@@ -6,7 +6,7 @@ import Loader from "../../Components/Loader";
 import RegisterScreen from "../RegisterScreen";
 import "./Homescreen.css";
 
-function HomeScreen() {
+function HomeScreen({ resetUser, setResetUser }) {
   const [sign, setSign] = useState(1);
   const [loading, setLoading] = useState(false);
 
@@ -71,7 +71,10 @@ function HomeScreen() {
               </div>
               <div className="container bg-color">
                 {sign ? (
-                  <LoginScreen setLoading={setLoading} />
+                  <LoginScreen
+                    setLoading={setLoading}
+                    setResetUser={setResetUser}
+                  />
                 ) : (
                   <RegisterScreen setLoading={setLoading} />
                 )}

@@ -15,6 +15,7 @@ import Loader from "../../Components/Loader";
 import ErrorModal from "../../Components/ErrorModal";
 import { editDataUrl, getDataUrl } from "../../apiDict";
 import { styled } from "styled-components";
+import emptyFileLogo from ".././../logos/empty.png";
 
 const Container = styled.div`
   display: flex;
@@ -28,18 +29,31 @@ const BlockTitle = styled.h2`
   text-align: left;
 `;
 
+const EmptyDivContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+`;
+
 function GettingStartScreen() {
   const navigate = useNavigate();
   const [createModal, setCreateModal] = useState("");
   const [loading, setLoading] = useState([]);
   const [result, setResult] = useState([]);
   const [error, setError] = useState("");
-  const [user] = useState(JSON.parse(localStorage.getItem("currentUser")));
+  const [totalItems, setTotalItems] = useState(0);
+  const [currentBlock, setCurrentBlock] = useState("All");
+
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("currentUser"))
+  );
   const allType = ["All", "Blogs", "Images", "Files", "Notes"];
 
   const getData = async ({ typeOfData, userId }) => {
     try {
       setLoading(true);
+      axios.defaults.withCredentials = true;
       const response = await axios.get(
         getDataUrl({
           typeOfData,
@@ -47,11 +61,17 @@ function GettingStartScreen() {
         })
       );
 
-      if (response.data.ok && response.data.res.ok) {
-        setResult(response.data.res.data);
+      if (!response.ok && response?.tokenError) {
+        localStorage.removeItem("currentUser");
+        navigate("/contact");
+      }
+
+      if (response.data && response.data.ok) {
+        setResult(response.data.data.items);
+        setTotalItems(response.data.data.totalLength);
         setLoading(false);
       } else {
-        setError(response.data.message || response.data.res.err);
+        setError(response.data.message);
       }
     } catch (err) {
       setError(err);
@@ -72,7 +92,7 @@ function GettingStartScreen() {
 
     getData({
       typeOfData: val.endsWith("s") ? val.slice(0, -1) : "",
-      userId: user._id,
+      userId: user.userId,
     });
   };
 
@@ -85,14 +105,21 @@ function GettingStartScreen() {
           label: "Yes",
           onClick: async () => {
             try {
-              await axios.post(editDataUrl, {
-                userId: user._id,
+              axios.defaults.withCredentials = true;
+              const response = await axios.post(editDataUrl, {
+                userId: user.userId,
                 contentId,
                 typeOfData,
                 data,
                 toDelete,
               });
-              getData({ typeOfData: "", userId: user._id });
+              if (!response.ok && response?.tokenError) {
+                localStorage.removeItem("currentUser");
+                navigate("/contact");
+              }
+              if (response.ok) {
+                getData({ typeOfData: "", userId: user.userId });
+              }
             } catch (error) {
               setError(error);
             }
@@ -108,14 +135,21 @@ function GettingStartScreen() {
 
   const handleEdit = async ({ contentId, typeOfData, data, toDelete }) => {
     try {
-      await axios.post(editDataUrl, {
-        userId: user._id,
+      axios.defaults.withCredentials = true;
+      const response = await axios.post(editDataUrl, {
+        userId: user.userId,
         contentId,
         typeOfData,
         data,
         toDelete,
       });
-      getData({ typeOfData: "", userId: user._id });
+      if (!response.ok && response?.tokenError) {
+        localStorage.removeItem("currentUser");
+        navigate("/contact");
+      }
+      if (response.ok) {
+        getData({ typeOfData: "", userId: user.userId });
+      }
     } catch (error) {
       setError(error);
     }
@@ -146,23 +180,27 @@ function GettingStartScreen() {
   };
 
   useEffect(() => {
-    if (createModal === "") {
-      getData({ typeOfData: "", userId: user._id });
+    if (user) {
+      getData({ typeOfData: "", userId: user.userId });
+    } else {
+      navigate("/contact");
     }
-  }, [createModal]);
+  }, [user]);
 
   return (
     <div className="container mt-4">
       {error && <ErrorModal errorMessage={error} />}
       <div className="container shadow-lg p-3 bg-white rounded">
-        <h1 className="title">CRUD Dashboard</h1>
+        <h1 className="title">DIC Drive Dashboard</h1>
         <div className="border-bottom border-dark d-flex justify-content-start">
-          {allType.map((block) => {
+          {allType.map((block, i) => {
             return (
               <button
+                key={i}
                 id={block}
                 className="px-4 py-1 btn2 element border-end border-dark"
                 onClick={() => {
+                  setCurrentBlock(block);
                   filterByType(block);
                 }}
               >
@@ -180,15 +218,18 @@ function GettingStartScreen() {
           </button>
         </div>
         <div className="outer mt-2">
-          <div className="d-flex" style={{ flexDirection: "column" }}>
+          <div
+            className="d-flex"
+            style={{ flexDirection: "column", height: "100%" }}
+          >
             {loading ? (
               <div className="container">
                 <Loader size={20} />
               </div>
-            ) : (
-              ["Note", "File", "Image", "Blog"].map((block) => {
+            ) : totalItems != 0 ? (
+              ["Note", "File", "Image", "Blog"].map((block, i) => {
                 return (
-                  <>
+                  <div key={i}>
                     {result[block].length > 0 && (
                       <BlockTitle>{block}s:</BlockTitle>
                     )}
@@ -238,14 +279,28 @@ function GettingStartScreen() {
                         }
                       )}
                     </Container>
-                  </>
+                  </div>
                 );
               })
+            ) : (
+              <EmptyDivContainer>
+                <img
+                  src={emptyFileLogo}
+                  style={{ width: "200px", height: "200px" }}
+                />
+              </EmptyDivContainer>
             )}
           </div>
         </div>
       </div>
-      {createModal && <Create show={setCreateModal} />}
+      {createModal && (
+        <Create
+          setShow={setCreateModal}
+          onClose={() => {
+            filterByType(currentBlock);
+          }}
+        />
+      )}
     </div>
   );
 }

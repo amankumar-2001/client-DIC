@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -9,15 +9,24 @@ const DropdownButton = styled.button`
   border: none;
 `;
 
-function Navbar() {
+function Navbar({ resetUser, setResetUser }) {
   const navigate = useNavigate();
-  const [user] = useState(JSON.parse(localStorage.getItem("currentUser")));
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("currentUser"))
+  );
 
   function logOut() {
     localStorage.removeItem("currentUser");
     navigate("/");
   }
 
+  useEffect(() => {
+    if (resetUser) {
+      setUser(JSON.parse(localStorage.getItem("currentUser")));
+      setResetUser(false);
+    }
+  }, [resetUser]);
+  
   return (
     <nav className="navbar navbar-expand-lg navbar-dark shadow-lg remain">
       <div className="container-fluid">
@@ -66,9 +75,13 @@ function Navbar() {
                 </DropdownButton>
                 <ul className="dropdown-menu dropdown-menu-end dropdown-menu-dark">
                   <li>
-                    <button className="dropdown-item" type="button" onClick={()=>{
-                      navigate("/profile");
-                    }}>
+                    <button
+                      className="dropdown-item"
+                      type="button"
+                      onClick={() => {
+                        navigate("/profile");
+                      }}
+                    >
                       Profile
                     </button>
                   </li>

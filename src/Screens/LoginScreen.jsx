@@ -5,7 +5,7 @@ import ErrorModal from "../Components/ErrorModal";
 import "./pos.css";
 import { getUserUrl } from "../apiDict";
 
-function LoginScreen({ setLoading }) {
+function LoginScreen({ setLoading, setResetUser }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -14,17 +14,18 @@ function LoginScreen({ setLoading }) {
   const checkUser = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        getUserUrl({
-          email,
-          password,
-        })
-      );
-      if (response.data.ok && response.data.res.ok) {
+      axios.defaults.withCredentials = true;
+      const response = await axios.post(getUserUrl, {
+        email,
+        password,
+      });
+
+      if (response.data && response.data.ok) {
         window.localStorage.setItem(
           "currentUser",
-          JSON.stringify(response.data.res.data)
+          JSON.stringify(response.data.data)
         );
+        setResetUser(true);
         navigate("/data");
       }
       setLoading(false);
