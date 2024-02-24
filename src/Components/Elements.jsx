@@ -4,8 +4,9 @@ import { IoMdDownload } from "react-icons/io";
 import { FaSave } from "react-icons/fa";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import styled from "styled-components";
-import fileImage from "../logos/file.png";
-
+import { FaFilePdf } from "react-icons/fa";
+import { FaFileExcel } from "react-icons/fa";
+import { RiFilePpt2Fill } from "react-icons/ri";
 const FileContainer = styled.div`
   width: 100%;
   display: flex;
@@ -36,6 +37,7 @@ const FileTitle = styled.h2`
   font-size: larger;
   color: white;
 `;
+
 const FileLeft = styled.div`
   padding-right: 12px;
   font-size: larger;
@@ -186,13 +188,24 @@ export const FileCard = ({
 }) => {
   return (
     <FileContainer>
-      <FileImage src={fileImage} alt={metaData?.fileName} width={100} />
+      {["application/pdf"].includes(metaData.fileType) ? (
+        <FaFilePdf size={45} style={{ padding: "4px" }} />
+      ) : ["text/csv", "excel"].includes(metaData.fileType) ? (
+        <FaFileExcel size={45} style={{ padding: "4px" }} />
+      ) : [
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ].includes(metaData.fileType) ? (
+        <RiFilePpt2Fill size={45} style={{ padding: "4px" }} />
+      ) : (
+        <></>
+      )}
       <FileContent>
         <FileTitle>{metaData?.fileName}</FileTitle>
         <FileLeft>
           {getFileTypeFromMimeType(metaData?.fileType)}
           <IoMdDownload
             size={25}
+            style={{ cursor: "pointer" }}
             onClick={() => {
               handleDownload({
                 publicUrl: metaData?.publicURL,
@@ -201,6 +214,7 @@ export const FileCard = ({
             }}
           />
           <MdDelete
+            style={{ cursor: "pointer" }}
             size={25}
             onClick={() => {
               handleDelete({ contentId, typeOfData, data, toDelete: true });
@@ -258,18 +272,21 @@ export const NoteCard = ({
         <NoteTop>
           <MdDelete
             size={25}
+            style={{ cursor: "pointer" }}
             onClick={() => {
               handleDelete({ contentId, typeOfData, data, toDelete: true });
             }}
           />
           <MdEdit
             size={25}
+            style={{ cursor: "pointer" }}
             onClick={() => {
-              setEditText(true);
+              setEditText((prevEditText) => prevEditText ^ true);
             }}
           />
           {editText ? (
             <FaSave
+              style={{ cursor: "pointer" }}
               size={25}
               onClick={() => {
                 handleEdit({

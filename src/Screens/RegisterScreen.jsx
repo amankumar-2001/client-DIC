@@ -1,20 +1,44 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import axios from "axios";
-import ErrorModal from "../Components/ErrorModal";
-import SuccessModal from "../Components/SuccessModal";
+import MessageModel from "../Components/MessageModel";
 import { registerUserUrl } from "../apiDict";
+import { styled } from "styled-components";
+import Loader from "../Components/Loader";
 
-function RegisterScreen({ setLoading }) {
+const LoginButton = styled.button`
+  display: inline-block;
+  margin-top: 12px;
+  padding: 7px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  color: white;
+  border-radius: 7px;
+  width: 100%;
+  background-color: black;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+
+  &:hover {
+    opacity: 0.7;
+  }
+`;
+
+function RegisterScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [cPassword, setCPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [displayMessage, setDisplayMessage] = useState({
+    type: "",
+    message: "",
+  });
 
   const registerUser = async () => {
+    setLoading(true);
     try {
       const response = await axios.post(registerUserUrl, {
         name,
@@ -22,26 +46,21 @@ function RegisterScreen({ setLoading }) {
         password,
       });
       if (response.data && response.data.ok) {
-        setSuccess(true);
+        setDisplayMessage({
+          type: "success",
+          message: "Registered Successfully",
+        });
       } else {
-        setError(response.data.message);
+        setDisplayMessage({ type: "error", message: response.data.message });
       }
-      setLoading(false);
     } catch (err) {
-      setError(err?.response?.data?.message);
+      setDisplayMessage({
+        type: "error",
+        message: err?.response?.data?.message,
+      });
     }
+    setLoading(false);
   };
-
-  useEffect(() => {
-    if (success || error) {
-      const intervalId = setInterval(() => {
-        setSuccess(false);
-        setError(false);
-      }, 3000);
-
-      return () => clearInterval(intervalId);
-    }
-  }, [success, error]);
 
   return (
     <div className="container mt-2">
@@ -49,12 +68,14 @@ function RegisterScreen({ setLoading }) {
         <div className="col-md-5 width">
           <div className="bs padding">
             <h1>Register</h1>
-            {error ? (
-              <ErrorModal errorMessage={error} />
-            ) : success ? (
-              <SuccessModal successMessage={"Successfully Registered"} />
-            ) : (
-              <></>
+            {displayMessage.type && (
+              <MessageModel
+                message={displayMessage.message}
+                messageType={displayMessage.type}
+                onClose={() => {
+                  setDisplayMessage({ type: "", message: "" });
+                }}
+              />
             )}
             <input
               type="text"
@@ -62,7 +83,7 @@ function RegisterScreen({ setLoading }) {
               placeholder="name"
               value={name}
               onChange={(e) => {
-                setError(false);
+                setDisplayMessage({ type: "", message: "" });
                 setName(e.target.value);
               }}
             />
@@ -72,7 +93,7 @@ function RegisterScreen({ setLoading }) {
               placeholder="email"
               value={email}
               onChange={(e) => {
-                setError(false);
+                setDisplayMessage({ type: "", message: "" });
                 setEmail(e.target.value);
               }}
             />
@@ -82,7 +103,7 @@ function RegisterScreen({ setLoading }) {
               placeholder="password"
               value={password}
               onChange={(e) => {
-                setError(false);
+                setDisplayMessage({ type: "", message: "" });
                 setPassword(e.target.value);
               }}
             />
@@ -92,21 +113,24 @@ function RegisterScreen({ setLoading }) {
               placeholder="confirm password"
               value={cPassword}
               onChange={(e) => {
-                setError(false);
+                setDisplayMessage({ type: "", message: "" });
                 setCPassword(e.target.value);
               }}
             />
 
-            <button
-              className="btn-primary btn"
+            <LoginButton
+              disabled={loading}
               onClick={() => {
                 password === cPassword
                   ? registerUser()
-                  : setError("Password Not Matched...");
+                  : setDisplayMessage({
+                      type: "error",
+                      message: "Password Not Matched...",
+                    });
               }}
             >
-              Register
-            </button>
+              {loading ? <Loader size={"5px"} color={"white"} /> : "Register"}
+            </LoginButton>
           </div>
         </div>
       </div>

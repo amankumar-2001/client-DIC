@@ -30,7 +30,6 @@ function HomeScreen({ resetUser, setResetUser }) {
 
   return (
     <div className="container mt-5 minWidth">
-      {loading && <Loader size={20} />}
       <div className="d-flex justify-content-between p-4 bg-black shadow-lg bar-wrap">
         <div className="container left border-end">
           <div className="operation">Create</div>
@@ -72,7 +71,6 @@ function HomeScreen({ resetUser, setResetUser }) {
               <div className="container bg-color">
                 {sign ? (
                   <LoginScreen
-                    setLoading={setLoading}
                     setResetUser={setResetUser}
                   />
                 ) : (

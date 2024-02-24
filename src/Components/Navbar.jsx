@@ -26,7 +26,7 @@ function Navbar({ resetUser, setResetUser }) {
       setResetUser(false);
     }
   }, [resetUser]);
-  
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark shadow-lg remain">
       <div className="container-fluid">
@@ -46,11 +46,19 @@ function Navbar({ resetUser, setResetUser }) {
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <Link className="nav-link active" aria-current="page" to="/">
-                Home
-              </Link>
-            </li>
+            {user ? (
+              <li className="nav-item">
+                <Link
+                  className="nav-link active"
+                  aria-current="page"
+                  to="/data"
+                >
+                  Home
+                </Link>
+              </li>
+            ) : (
+              <></>
+            )}
             <li className="nav-item">
               <Link className="nav-link" to="/about">
                 About
@@ -85,11 +93,6 @@ function Navbar({ resetUser, setResetUser }) {
                       Profile
                     </button>
                   </li>
-                  {/* <li>
-                    <button className="dropdown-item" type="button">
-                      Another action
-                    </button>
-                  </li> */}
                   <li>
                     <hr className="dropdown-divider" />
                   </li>

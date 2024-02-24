@@ -12,7 +12,7 @@ import Create from "../../Components/Create";
 import axios from "axios";
 import { confirmAlert } from "react-confirm-alert";
 import Loader from "../../Components/Loader";
-import ErrorModal from "../../Components/ErrorModal";
+import MessageModel from "../../Components/MessageModel";
 import { editDataUrl, getDataUrl } from "../../apiDict";
 import { styled } from "styled-components";
 import emptyFileLogo from ".././../logos/empty.png";
@@ -36,14 +36,22 @@ const EmptyDivContainer = styled.div`
   height: 100%;
 `;
 
+const CustomTap = styled.button`
+  border-radius: ${({ index }) =>
+    index === 0 ? "12px 0px 0px 0px" : index === 5 ? "0px 12px 0px 0px" : ""};
+`;
+
 function GettingStartScreen() {
   const navigate = useNavigate();
   const [createModal, setCreateModal] = useState("");
   const [loading, setLoading] = useState([]);
   const [result, setResult] = useState([]);
-  const [error, setError] = useState("");
   const [totalItems, setTotalItems] = useState(0);
   const [currentBlock, setCurrentBlock] = useState("All");
+  const [displayMessage, setDisplayMessage] = useState({
+    type: "",
+    message: "",
+  });
 
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("currentUser"))
@@ -61,8 +69,12 @@ function GettingStartScreen() {
         })
       );
 
-      if (!response.ok && response?.tokenError) {
+      if (!response?.data.ok && response?.data?.tokenError) {
         localStorage.removeItem("currentUser");
+        setDisplayMessage({
+          type: "warning",
+          message: "Your are logged out!!",
+        });
         navigate("/contact");
       }
 
@@ -71,10 +83,10 @@ function GettingStartScreen() {
         setTotalItems(response.data.data.totalLength);
         setLoading(false);
       } else {
-        setError(response.data.message);
+        setDisplayMessage({ type: "error", message: response.data.message });
       }
     } catch (err) {
-      setError(err);
+      setDisplayMessage({ type: "error", message: err.message });
     }
   };
 
@@ -113,15 +125,15 @@ function GettingStartScreen() {
                 data,
                 toDelete,
               });
-              if (!response.ok && response?.tokenError) {
+              if (!response?.data?.ok && response?.data?.tokenError) {
                 localStorage.removeItem("currentUser");
                 navigate("/contact");
               }
-              if (response.ok) {
+              if (response?.data?.ok) {
                 getData({ typeOfData: "", userId: user.userId });
               }
             } catch (error) {
-              setError(error);
+              setDisplayMessage({ type: "error", message: error.message });
             }
           },
         },
@@ -143,15 +155,15 @@ function GettingStartScreen() {
         data,
         toDelete,
       });
-      if (!response.ok && response?.tokenError) {
+      if (!response.data.ok && response?.data?.tokenError) {
         localStorage.removeItem("currentUser");
         navigate("/contact");
       }
-      if (response.ok) {
+      if (response.data.ok) {
         getData({ typeOfData: "", userId: user.userId });
       }
     } catch (error) {
-      setError(error);
+      setDisplayMessage({ type: "error", message: error.message });
     }
   };
 
@@ -175,7 +187,10 @@ function GettingStartScreen() {
       downloadEvent.click();
       document.body.removeChild(downloadEvent);
     } catch (error) {
-      setError("Error downloading file:", error);
+      setDisplayMessage({
+        type: "error",
+        message: `Error downloading file:${error.message}`,
+      });
     }
   };
 
@@ -188,120 +203,132 @@ function GettingStartScreen() {
   }, [user]);
 
   return (
-    <div className="container mt-4">
-      {error && <ErrorModal errorMessage={error} />}
-      <div className="container shadow-lg p-3 bg-white rounded">
-        <h1 className="title">DIC Drive Dashboard</h1>
-        <div className="border-bottom border-dark d-flex justify-content-start">
-          {allType.map((block, i) => {
-            return (
-              <button
-                key={i}
-                id={block}
-                className="px-4 py-1 btn2 element border-end border-dark"
-                onClick={() => {
-                  setCurrentBlock(block);
-                  filterByType(block);
-                }}
-              >
-                {block}
-              </button>
-            );
-          })}
-          <button
-            className="px-4 py-1 btn2 element"
-            data-bs-toggle="modal"
-            data-bs-target="#staticBackdrop"
-            onClick={() => setCreateModal("show")}
-          >
-            Add
-          </button>
-        </div>
-        <div className="outer mt-2">
-          <div
-            className="d-flex"
-            style={{ flexDirection: "column", height: "100%" }}
-          >
-            {loading ? (
-              <div className="container">
-                <Loader size={20} />
-              </div>
-            ) : totalItems != 0 ? (
-              ["Note", "File", "Image", "Blog"].map((block, i) => {
-                return (
-                  <div key={i}>
-                    {result[block].length > 0 && (
-                      <BlockTitle>{block}s:</BlockTitle>
-                    )}
-                    <Container>
-                      {result[block].map(
-                        ({ data, metaData, typeOfData, contentId }, i) => {
-                          return block === "Image" ? (
-                            <ImageCard
-                              key={i}
-                              handleDelete={handleDelete}
-                              data={data}
-                              metaData={metaData}
-                              typeOfData={typeOfData}
-                              contentId={contentId}
-                              onClick={() => {}}
-                            />
-                          ) : block === "File" ? (
-                            <FileCard
-                              key={i}
-                              handleDelete={handleDelete}
-                              data={data}
-                              metaData={metaData}
-                              typeOfData={typeOfData}
-                              contentId={contentId}
-                              handleDownload={handleDownload}
-                            />
-                          ) : block === "Blog" ? (
-                            <BlogCard
-                              key={i}
-                              handleDelete={handleDelete}
-                              data={data}
-                              metaData={metaData}
-                              typeOfData={typeOfData}
-                              contentId={contentId}
-                            />
-                          ) : (
-                            <NoteCard
-                              key={i}
-                              handleDelete={handleDelete}
-                              data={data}
-                              metaData={metaData}
-                              typeOfData={typeOfData}
-                              contentId={contentId}
-                              handleEdit={handleEdit}
-                            />
-                          );
-                        }
-                      )}
-                    </Container>
-                  </div>
-                );
-              })
-            ) : (
-              <EmptyDivContainer>
-                <img
-                  src={emptyFileLogo}
-                  style={{ width: "200px", height: "200px" }}
-                />
-              </EmptyDivContainer>
-            )}
-          </div>
-        </div>
-      </div>
-      {createModal && (
-        <Create
-          setShow={setCreateModal}
+    <>
+      {displayMessage.type && (
+        <MessageModel
+          message={displayMessage.message}
+          messageType={displayMessage.type}
           onClose={() => {
-            filterByType(currentBlock);
+            setDisplayMessage({ type: "", message: "" });
           }}
         />
       )}
-    </div>
+      <div className="container mt-4">
+        <div className="container shadow-lg p-3 bg-white rounded">
+          <h1 className="title">DIC Drive Dashboard</h1>
+          <div className="border-bottom border-dark d-flex justify-content-start">
+            {allType.map((block, i) => {
+              return (
+                <CustomTap
+                  key={i}
+                  index={i}
+                  id={block}
+                  className="px-4 py-1 btn2 element border-end border-dark"
+                  onClick={() => {
+                    setCurrentBlock(block);
+                    filterByType(block);
+                  }}
+                >
+                  {block}
+                </CustomTap>
+              );
+            })}
+            <CustomTap
+              index={5}
+              className="px-4 py-1 btn2 element"
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop"
+              onClick={() => setCreateModal("show")}
+            >
+              Add
+            </CustomTap>
+          </div>
+          <div className="outer mt-2">
+            <div
+              className="d-flex"
+              style={{ flexDirection: "column", height: "100%" }}
+            >
+              {loading ? (
+                <div className="container">
+                  <Loader size={20} />
+                </div>
+              ) : totalItems != 0 ? (
+                ["Note", "File", "Image", "Blog"].map((block, i) => {
+                  return (
+                    <div key={i}>
+                      {result[block].length > 0 && (
+                        <BlockTitle>{block}s:</BlockTitle>
+                      )}
+                      <Container>
+                        {result[block].map(
+                          ({ data, metaData, typeOfData, contentId }, i) => {
+                            return block === "Image" ? (
+                              <ImageCard
+                                key={i}
+                                handleDelete={handleDelete}
+                                data={data}
+                                metaData={metaData}
+                                typeOfData={typeOfData}
+                                contentId={contentId}
+                                onClick={() => {}}
+                              />
+                            ) : block === "File" ? (
+                              <FileCard
+                                key={i}
+                                handleDelete={handleDelete}
+                                data={data}
+                                metaData={metaData}
+                                typeOfData={typeOfData}
+                                contentId={contentId}
+                                handleDownload={handleDownload}
+                              />
+                            ) : block === "Blog" ? (
+                              <BlogCard
+                                key={i}
+                                handleDelete={handleDelete}
+                                data={data}
+                                metaData={metaData}
+                                typeOfData={typeOfData}
+                                contentId={contentId}
+                              />
+                            ) : (
+                              <NoteCard
+                                key={i}
+                                handleDelete={handleDelete}
+                                data={data}
+                                metaData={metaData}
+                                typeOfData={typeOfData}
+                                contentId={contentId}
+                                handleEdit={handleEdit}
+                              />
+                            );
+                          }
+                        )}
+                      </Container>
+                    </div>
+                  );
+                })
+              ) : (
+                <EmptyDivContainer>
+                  <img
+                    src={emptyFileLogo}
+                    style={{ width: "200px", height: "200px" }}
+                  />
+                </EmptyDivContainer>
+              )}
+            </div>
+          </div>
+        </div>
+        {createModal && (
+          <Create
+            setShow={setCreateModal}
+            onClose={() => {
+              filterByType(currentBlock);
+            }}
+          />
+        )}
+      </div>{" "}
+    </>
   );
 }
 

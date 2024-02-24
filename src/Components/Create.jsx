@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
-import ErrorModal from "./ErrorModal";
 import { styled } from "styled-components";
 import { saveDataUrl } from "../apiDict";
 import Loader from "./Loader";
 import { useNavigate } from "react-router-dom";
+import { RiArrowDropDownLine } from "react-icons/ri";
 
 const ImageComponent = styled.input`
   width: 100%;
@@ -34,30 +34,64 @@ const SubmitButton = styled.button`
   }
 `;
 
+const DropdownButton = styled.button`
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border: 1px solid #ced4da;
+  margin: 12px 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const ErrorComponent = styled.div`
+  width: 100%;
+  margin: 12px 0px 0px 0px;
+  color: ${({ messageType }) =>
+    messageType === "error"
+      ? "red"
+      : messageType === "warning"
+      ? "yellow"
+      : messageType === "success"
+      ? "green"
+      : ""};
+`;
+
 function Add({ setShow, onClose }) {
   const [user] = useState(JSON.parse(localStorage.getItem("currentUser")));
   const [type, setType] = useState("Select the Create Type");
   const [data, setData] = useState("");
-  const [error, setError] = useState("");
+  const [displayMessage, setDisplayMessage] = useState({
+    type: "",
+    message: "",
+  });
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("userId", user.userId);
-    formData.append("typeOfData", type);
-    formData.append("data", data);
-    formData.append("file", file);
-
+    if (type === "Select the Create Type") {
+      setDisplayMessage({
+        type: "error",
+        message: "Please enter valid Data",
+      });
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
+
+      const formData = new FormData();
+      formData.append("userId", user.userId);
+      formData.append("typeOfData", type);
+      formData.append("data", data);
+      formData.append("file", file);
+
       axios.defaults.withCredentials = true;
       const response = await axios.post(saveDataUrl, formData);
 
-      if (!response?.ok && response?.tokenError) {
+      if (!response?.ok && response?.data?.tokenError) {
         navigate("/contact");
       }
       if (response.data && response.data.ok) {
@@ -72,23 +106,32 @@ function Add({ setShow, onClose }) {
           console.error("Button not found");
         }
       } else {
-        setError(response.data.message || "Please enter valid Data");
+        setDisplayMessage({
+          type: "error",
+          message: response.data.message,
+        });
       }
       setLoading(false);
     } catch (error) {
-      setError(error);
+      setDisplayMessage({
+        type: "error",
+        message: error.message,
+      });
     }
   };
 
   useEffect(() => {
-    if (error) {
+    if (displayMessage.type) {
       const intervalId = setInterval(() => {
-        setError(false);
+        setDisplayMessage({
+          type: "",
+          message: "",
+        });
       }, 3000);
 
       return () => clearInterval(intervalId);
     }
-  }, [error]);
+  }, [displayMessage]);
 
   return (
     <div
@@ -113,7 +156,16 @@ function Add({ setShow, onClose }) {
               aria-label="Close"
             ></button>
           </div>
-          {error && <ErrorModal errorMessage={error} />}
+          {displayMessage.type && (
+            <ErrorComponent
+              messageType={displayMessage.type}
+              onClick={() => {
+                setDisplayMessage({ type: "", message: "" });
+              }}
+            >
+              {displayMessage.message}
+            </ErrorComponent>
+          )}
           <div className="modal-body">
             <form onSubmit={handleSubmit}>
               <div className="form-group">
@@ -127,25 +179,55 @@ function Add({ setShow, onClose }) {
                 />
               </div>
               <div className="form-group">
-                <label>Select Create Type</label>
-                <select
+                <DropdownButton
+                  type="button"
                   className="form-control"
-                  id="FormControlSelect1"
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
                 >
-                  <option>Select the Create Type</option>
-                  <option>Blog</option>
-                  <option>File</option>
-                  <option>Note</option>
-                  <option>Image</option>
-                </select>
+                  {type}
+                  <RiArrowDropDownLine />
+                </DropdownButton>
+                <ul
+                  className="dropdown-menu dropdown-menu-end dropdown-menu-dark"
+                  style={{ width: "94%" }}
+                >
+                  {["Blog", "File", "Note", "Image"].map((options, i) => {
+                    return (
+                      <div key={i}>
+                        <li>
+                          <button
+                            className="dropdown-item"
+                            type="button"
+                            onClick={() => {
+                              setType(options);
+                            }}
+                          >
+                            {options}
+                          </button>
+                        </li>
+                        {i !== 3 ? (
+                          <li>
+                            <hr className="dropdown-divider" />
+                          </li>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    );
+                  })}
+                </ul>
               </div>
               {type === "File" || type === "Image" || type === "Blog" ? (
                 <ImageComponent
                   type="file"
                   className="form-control"
                   id="fileInput"
+                  accept={
+                    type === "File"
+                      ? ".pdf, .xlsx, .xls, .ppt, .pptx"
+                      : ".jpg, .jpeg, .png, .gif"
+                  }
                   onChange={(e) => setFile(e.target.files[0])}
                 />
               ) : (
@@ -153,8 +235,8 @@ function Add({ setShow, onClose }) {
               )}
               {type === "Note" || type === "Blog" ? (
                 <div className="form-group">
-                  <label htmlFor="FormControlTextarea1">
-                    Additional Information
+                  <label htmlFor="FormControlTextarea1" style={{margin:"4px 0px"}}>
+                    {type === "Blog" ? "Write your Blog" : "New Note"}
                   </label>
                   <textarea
                     className="form-control"

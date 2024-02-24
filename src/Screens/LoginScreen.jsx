@@ -1,14 +1,41 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import ErrorModal from "../Components/ErrorModal";
+import MessageModel from "../Components/MessageModel";
 import "./pos.css";
 import { getUserUrl } from "../apiDict";
+import Loader from "../Components/Loader";
+import { styled } from "styled-components";
 
-function LoginScreen({ setLoading, setResetUser }) {
+const LoginButton = styled.button`
+  display: inline-block;
+  margin-top: 12px;
+  padding: 7px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  color: white;
+  border-radius: 7px;
+  width: 100%;
+  background-color: black;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+
+  &:hover {
+    opacity: 0.7;
+  }
+`;
+
+function LoginScreen({ setResetUser }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [displayMessage, setDisplayMessage] = useState({
+    type: "",
+    message: "",
+  });
   const navigate = useNavigate();
 
   const checkUser = async () => {
@@ -27,11 +54,13 @@ function LoginScreen({ setLoading, setResetUser }) {
         );
         setResetUser(true);
         navigate("/data");
+      } else {
+        setDisplayMessage({ type: "error", message: response?.data?.message });
       }
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      setError(err?.response?.data?.message);
+      setDisplayMessage({ type: "error", message: err?.message });
     }
   };
 
@@ -40,7 +69,15 @@ function LoginScreen({ setLoading, setResetUser }) {
       <div className="row justify-content-center p-3">
         <div className="col-md-5 width">
           <h1>Login</h1>
-          {error && <ErrorModal errorMessage={error} />}
+          {displayMessage.type && (
+            <MessageModel
+              message={displayMessage.message}
+              messageType={displayMessage.type}
+              onClose={() => {
+                setDisplayMessage({ type: "", message: "" });
+              }}
+            />
+          )}
           <input
             type="email"
             className="form-control mt-2"
@@ -55,9 +92,10 @@ function LoginScreen({ setLoading, setResetUser }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button className="btn-primary btn" onClick={() => checkUser()}>
-            Login
-          </button>
+
+          <LoginButton onClick={() => checkUser()} disabled={loading}>
+            {loading ? <Loader size={"5px"} color={"white"} /> : "Login"}
+          </LoginButton>
         </div>
       </div>
     </div>
