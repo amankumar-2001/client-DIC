@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { FaFilePdf } from "react-icons/fa";
 import { FaFileExcel } from "react-icons/fa";
 import { RiFilePpt2Fill } from "react-icons/ri";
+
 const FileContainer = styled.div`
   width: 100%;
   display: flex;
@@ -15,12 +16,6 @@ const FileContainer = styled.div`
   overflow: hidden;
   margin: 16px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-`;
-
-const FileImage = styled.img`
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
 `;
 
 const FileContent = styled.div`
@@ -114,7 +109,7 @@ const NoteContent = styled.div`
   width: 100%;
 `;
 
-const Note = styled.input`
+const Note = styled.textarea`
   padding: 12px;
   font-size: larger;
   color: white;
@@ -306,6 +301,7 @@ export const NoteCard = ({
           <Note
             type="textarea"
             value={note}
+            rows={5}
             onChange={(e) => setNote(e.target.value)}
           />
         ) : (
