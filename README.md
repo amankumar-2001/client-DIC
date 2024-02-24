@@ -28,10 +28,6 @@ Following are the screenshot of the application:
 ![alt text](./images/Dashboard.png)
 - This is the dashboard.
 
-### Detail data
-![alt text](./images/detail-data.png)
-- Every element's detailed information.
-
 ### Create Modal
 ![alt text](./images/create-model.png)
 - This is create modal.
