@@ -57,7 +57,7 @@ function ConfirmationPopup({
             </Button>
           </ButtonContainer>
         </ConfirmationContent>
-      ) : state === "error" || true ? (
+      ) : state === "error" ? (
         <ConfirmationContent onClick={(e) => e.stopPropagation()}>
           <MdError size={150} style={{ color: "#cfb815" }} />
           <Title>Error</Title>
