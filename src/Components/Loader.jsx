@@ -12,15 +12,13 @@ function Loader({ size, color, margin = 5 }) {
   let [loading] = useState(true);
   return (
     <CustomLoaderContainer margin={margin}>
-      <div className="sweet-loading filter m-1">
-        <PulseLoader
-          color={color || "#000"}
-          loading={loading}
-          size={size || 40}
-          aria-label="Loading Spinner"
-          data-testid="loader"
-        />
-      </div>
+      <PulseLoader
+        color={color || "#000"}
+        loading={loading}
+        size={size || 40}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
     </CustomLoaderContainer>
   );
 }

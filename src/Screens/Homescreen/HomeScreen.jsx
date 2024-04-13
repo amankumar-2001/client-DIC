@@ -2,7 +2,6 @@ import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import LoginScreen from "../LoginScreen";
-import Loader from "../../Components/Loader";
 import RegisterScreen from "../RegisterScreen";
 import "./Homescreen.css";
 

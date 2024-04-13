@@ -16,6 +16,7 @@ import MessageModel from "../../Components/MessageModel";
 import { editDataUrl, getDataUrl } from "../../apiDict";
 import { styled } from "styled-components";
 import emptyFileLogo from ".././../logos/empty.png";
+import ConfirmationPopup from "../../Components/ConfirmationPopup";
 
 const Container = styled.div`
   display: flex;
@@ -45,9 +46,11 @@ function GettingStartScreen() {
   const navigate = useNavigate();
   const [createModal, setCreateModal] = useState("");
   const [loading, setLoading] = useState([]);
+  const [dataState, setDataState] = useState("not-set");
   const [result, setResult] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [currentBlock, setCurrentBlock] = useState("All");
+  const [showConfirmationPopup, setShowConfirmationPopup] = useState(null);
   const [displayMessage, setDisplayMessage] = useState({
     type: "",
     message: "",
@@ -60,7 +63,7 @@ function GettingStartScreen() {
 
   const getData = async ({ typeOfData, userId }) => {
     try {
-      setLoading(true);
+      setDataState("loading");
       axios.defaults.withCredentials = true;
       const response = await axios.get(
         getDataUrl({
@@ -81,10 +84,10 @@ function GettingStartScreen() {
       if (response.data && response.data.ok) {
         setResult(response.data.data.items);
         setTotalItems(response.data.data.totalLength);
-        setLoading(false);
       } else {
         setDisplayMessage({ type: "error", message: response.data.message });
       }
+      setDataState("done");
     } catch (err) {
       setDisplayMessage({ type: "error", message: err.message });
     }
@@ -109,44 +112,38 @@ function GettingStartScreen() {
   };
 
   const handleDelete = async ({ contentId, typeOfData, data, toDelete }) => {
-    confirmAlert({
-      title: "Delete!!",
-      message: "Are you sure, You want to delete this?",
-      buttons: [
-        {
-          label: "Yes",
-          onClick: async () => {
-            try {
-              axios.defaults.withCredentials = true;
-              const response = await axios.post(editDataUrl, {
-                userId: user.userId,
-                contentId,
-                typeOfData,
-                data,
-                toDelete,
-              });
-              if (!response?.data?.ok && response?.data?.tokenError) {
-                localStorage.removeItem("currentUser");
-                navigate("/contact");
-              }
-              if (response?.data?.ok) {
-                getData({ typeOfData: "", userId: user.userId });
-              }
-            } catch (error) {
-              setDisplayMessage({ type: "error", message: error.message });
-            }
-          },
-        },
-        {
-          label: "No",
-          onClick: () => {},
-        },
-      ],
-    });
+    try {
+      setShowConfirmationPopup((prev) => {
+        return { ...prev, state: "loading" };
+      });
+      axios.defaults.withCredentials = true;
+      const response = await axios.post(editDataUrl, {
+        userId: user.userId,
+        contentId,
+        typeOfData,
+        data,
+        toDelete,
+      });
+      if (!response?.data?.ok && response?.data?.tokenError) {
+        localStorage.removeItem("currentUser");
+        navigate("/contact");
+      }
+      setShowConfirmationPopup((prev) => {
+        return { ...prev, state: "success" };
+      });
+    } catch (error) {
+      setShowConfirmationPopup((prev) => {
+        return { ...prev, state: "error" };
+      });
+      setDisplayMessage({ type: "error", message: error.message });
+    }
   };
 
   const handleEdit = async ({ contentId, typeOfData, data, toDelete }) => {
     try {
+      setShowConfirmationPopup((prev) => {
+        return { ...prev, state: "loading" };
+      });
       axios.defaults.withCredentials = true;
       const response = await axios.post(editDataUrl, {
         userId: user.userId,
@@ -159,10 +156,13 @@ function GettingStartScreen() {
         localStorage.removeItem("currentUser");
         navigate("/contact");
       }
-      if (response.data.ok) {
-        getData({ typeOfData: "", userId: user.userId });
-      }
+      setShowConfirmationPopup((prev) => {
+        return { ...prev, state: "success" };
+      });
     } catch (error) {
+      setShowConfirmationPopup((prev) => {
+        return { ...prev, state: "error" };
+      });
       setDisplayMessage({ type: "error", message: error.message });
     }
   };
@@ -248,11 +248,11 @@ function GettingStartScreen() {
               className="d-flex"
               style={{ flexDirection: "column", height: "100%" }}
             >
-              {loading ? (
+              {dataState === "loading" ? (
                 <div className="container">
                   <Loader size={20} />
                 </div>
-              ) : totalItems != 0 ? (
+              ) : dataState === "done" && totalItems != 0 ? (
                 ["Note", "File", "Image", "Blog"].map((block, i) => {
                   return (
                     <div key={i}>
@@ -271,6 +271,10 @@ function GettingStartScreen() {
                                 typeOfData={typeOfData}
                                 contentId={contentId}
                                 onClick={() => {}}
+                                handleDownload={handleDownload}
+                                setShowConfirmationPopup={
+                                  setShowConfirmationPopup
+                                }
                               />
                             ) : block === "File" ? (
                               <FileCard
@@ -281,6 +285,9 @@ function GettingStartScreen() {
                                 typeOfData={typeOfData}
                                 contentId={contentId}
                                 handleDownload={handleDownload}
+                                setShowConfirmationPopup={
+                                  setShowConfirmationPopup
+                                }
                               />
                             ) : block === "Blog" ? (
                               <BlogCard
@@ -290,6 +297,9 @@ function GettingStartScreen() {
                                 metaData={metaData}
                                 typeOfData={typeOfData}
                                 contentId={contentId}
+                                setShowConfirmationPopup={
+                                  setShowConfirmationPopup
+                                }
                               />
                             ) : (
                               <NoteCard
@@ -300,6 +310,9 @@ function GettingStartScreen() {
                                 typeOfData={typeOfData}
                                 contentId={contentId}
                                 handleEdit={handleEdit}
+                                setShowConfirmationPopup={
+                                  setShowConfirmationPopup
+                                }
                               />
                             );
                           }
@@ -326,6 +339,27 @@ function GettingStartScreen() {
               filterByType(currentBlock);
             }}
           />
+        )}
+        {showConfirmationPopup ? (
+          <ConfirmationPopup
+            title={showConfirmationPopup.title}
+            message={showConfirmationPopup.message}
+            closeBtnText={showConfirmationPopup.closeBtnText}
+            closeBtnFunction={showConfirmationPopup.closeBtnFunction}
+            confirmBtnText={showConfirmationPopup.confirmBtnText}
+            successPopupText={showConfirmationPopup.successPopupText}
+            confirmBtnFunction={showConfirmationPopup.confirmBtnFunction}
+            successPopupBtnText={showConfirmationPopup.successPopupBtnText}
+            successPopupBtnFunction={() => {
+              showConfirmationPopup.successPopupBtnFunction();
+              getData({ typeOfData: "", userId: user.userId });
+            }}
+            errorPopupBtnText={showConfirmationPopup.errorPopupBtnText}
+            errorPopupBtnFunction={showConfirmationPopup.errorPopupBtnFunction}
+            state={showConfirmationPopup.state}
+          />
+        ) : (
+          <></>
         )}
       </div>{" "}
     </>

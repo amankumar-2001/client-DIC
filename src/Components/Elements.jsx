@@ -7,11 +7,14 @@ import styled from "styled-components";
 import { FaFilePdf } from "react-icons/fa";
 import { FaFileExcel } from "react-icons/fa";
 import { RiFilePpt2Fill } from "react-icons/ri";
+import { BsFillEyeFill } from "react-icons/bs";
+import Modal from "./Modal";
 
 const FileContainer = styled.div`
   width: 100%;
   display: flex;
   border: 1px solid #ccc;
+  background: #ccc;
   border-radius: 8px;
   overflow: hidden;
   margin: 16px;
@@ -27,10 +30,10 @@ const FileContent = styled.div`
   width: 100%;
 `;
 
-const FileTitle = styled.h2`
+const FileTitle = styled.div`
   padding-left: 12px;
   font-size: larger;
-  color: white;
+  color: black;
 `;
 
 const FileLeft = styled.div`
@@ -42,17 +45,21 @@ const FileLeft = styled.div`
 `;
 
 const CardContainer = styled.div`
+  position: relative;
   width: 300px;
-  border: 1px solid #ccc;
   border-radius: 8px;
   overflow: hidden;
   margin: 16px;
   height: 200px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background: url(${({ background }) => background});
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  cursor: pointer;
+
+  &:hover .overlay {
+    opacity: 1;
+  }
 `;
 
 const CardImage = styled.img`
@@ -62,18 +69,34 @@ const CardImage = styled.img`
   border-radius: 6px;
 `;
 
+const Overlay = styled.div`
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+`;
+
 const CardContent = styled.div`
   padding: 16px;
 `;
 
 const CardText = styled.p`
   font-size: 1rem;
-  color: white;
+  color: black;
 `;
 
 const BlogContainer = styled.div`
   width: 100%;
   border: 1px solid #ccc;
+  background: #ccc;
   border-radius: 8px;
   overflow: hidden;
   margin: 16px;
@@ -93,6 +116,7 @@ const NoteContainer = styled.div`
   width: 40%;
   display: flex;
   border: 1px solid #ccc;
+  background: #ccc;
   border-radius: 8px;
   overflow: hidden;
   margin: 16px;
@@ -112,7 +136,7 @@ const NoteContent = styled.div`
 const Note = styled.textarea`
   padding: 12px;
   font-size: larger;
-  color: white;
+  color: black;
   width: 100%;
   text-align: left;
   background: none;
@@ -122,7 +146,7 @@ const Note = styled.textarea`
 const NoteData = styled.div`
   padding: 12px;
   font-size: larger;
-  color: white;
+  color: black;
   width: 100%;
   text-align: left;
 `;
@@ -163,14 +187,95 @@ const getFileTypeFromMimeType = (mimeType) => {
   return mimeTypeMapping[mimeType] || defaultFileType;
 };
 
+const ImageContainer = styled.div`
+  text-align: center;
+`;
+
+const Image = styled.img`
+  max-width: 100%;
+  max-height: 600px;
+`;
+
+const ImagePreview = ({ src, preview, setPreview }) => {
+  return (
+    <ImageContainer>
+      <Modal isOpen={preview} onClose={() => setPreview(false)}>
+        <Image src={src} alt="Preview" />
+      </Modal>
+    </ImageContainer>
+  );
+};
+
 export const ImageCard = ({
   data,
   metaData,
   typeOfData,
   contentId,
   handleDelete,
+  handleDownload,
+  setShowConfirmationPopup,
 }) => {
-  return <CardContainer background={metaData?.publicURL}></CardContainer>;
+  const [preview, setPreview] = useState(false);
+  return (
+    <CardContainer>
+      <CardImage
+        src={metaData?.publicURL}
+        alt={metaData?.fileName}
+        width={100}
+        isBlog={false}
+      />
+      <ImagePreview
+        src={metaData?.publicURL}
+        preview={preview}
+        setPreview={setPreview}
+      />
+      <Overlay className="overlay">
+        <BsFillEyeFill
+          size={45}
+          style={{ padding: "4px", color: "white" }}
+          onClick={() => setPreview(true)}
+        />
+        <IoMdDownload
+          size={45}
+          style={{ padding: "4px", color: "white" }}
+          onClick={() => {
+            handleDownload({
+              publicUrl: metaData?.publicURL,
+              fileName: metaData?.fileName,
+            });
+          }}
+        />
+        <MdDelete
+          size={45}
+          style={{ padding: "4px", color: "white" }}
+          onClick={() => {
+            setShowConfirmationPopup({
+              title: "Confirmation!!",
+              message: "Are you sure, you want to delete?",
+              closeBtnText: "Cancel",
+              closeBtnFunction: () => {
+                setShowConfirmationPopup(null);
+              },
+              confirmBtnText: "Delete",
+              confirmBtnFunction: () => {
+                handleDelete({ contentId, typeOfData, data, toDelete: true });
+              },
+              successPopupText: "Deleted successfully",
+              successPopupBtnText: "Okay",
+              successPopupBtnFunction: () => {
+                setShowConfirmationPopup(null);
+              },
+              errorPopupBtnText: "Okay",
+              errorPopupBtnFunction: () => {
+                setShowConfirmationPopup(null);
+              },
+              state: "not-set",
+            });
+          }}
+        />
+      </Overlay>
+    </CardContainer>
+  );
 };
 
 export const FileCard = ({
@@ -180,6 +285,7 @@ export const FileCard = ({
   contentId,
   handleDelete,
   handleDownload,
+  setShowConfirmationPopup,
 }) => {
   return (
     <FileContainer>
@@ -212,7 +318,28 @@ export const FileCard = ({
             style={{ cursor: "pointer" }}
             size={25}
             onClick={() => {
-              handleDelete({ contentId, typeOfData, data, toDelete: true });
+              setShowConfirmationPopup({
+                title: "Confirmation!!",
+                message: "Are you sure, you want to delete?",
+                closeBtnText: "Cancel",
+                closeBtnFunction: () => {
+                  setShowConfirmationPopup(null);
+                },
+                confirmBtnText: "Delete",
+                confirmBtnFunction: () => {
+                  handleDelete({ contentId, typeOfData, data, toDelete: true });
+                },
+                successPopupText: "Deleted successfully",
+                successPopupBtnText: "Okay",
+                successPopupBtnFunction: () => {
+                  setShowConfirmationPopup(null);
+                },
+                errorPopupBtnText: "Okay",
+                errorPopupBtnFunction: () => {
+                  setShowConfirmationPopup(null);
+                },
+                state: "not-set",
+              });
             }}
           />
         </FileLeft>
@@ -227,6 +354,7 @@ export const BlogCard = ({
   typeOfData,
   contentId,
   handleDelete,
+  setShowConfirmationPopup,
 }) => {
   return (
     <BlogContainer>
@@ -235,11 +363,34 @@ export const BlogCard = ({
           src={metaData?.publicURL}
           alt={metaData?.fileName}
           width={50}
+          isBlog={true}
         />
         <MdDelete
           size={25}
+          style={{ cursor: "pointer" }}
           onClick={() => {
-            handleDelete({ contentId, typeOfData, data, toDelete: true });
+            setShowConfirmationPopup({
+              title: "Confirmation!!",
+              message: "Are you sure, you want to delete?",
+              closeBtnText: "Cancel",
+              closeBtnFunction: () => {
+                setShowConfirmationPopup(null);
+              },
+              confirmBtnText: "Delete",
+              confirmBtnFunction: () => {
+                handleDelete({ contentId, typeOfData, data, toDelete: true });
+              },
+              successPopupText: "Deleted successfully",
+              successPopupBtnText: "Okay",
+              successPopupBtnFunction: () => {
+                setShowConfirmationPopup(null);
+              },
+              errorPopupBtnText: "Okay",
+              errorPopupBtnFunction: () => {
+                setShowConfirmationPopup(null);
+              },
+              state: "not-set",
+            });
           }}
         />
       </BlogTop>
@@ -257,6 +408,7 @@ export const NoteCard = ({
   contentId,
   handleDelete,
   handleEdit,
+  setShowConfirmationPopup,
 }) => {
   const [editText, setEditText] = useState(false);
   const [note, setNote] = useState(data);
@@ -269,7 +421,28 @@ export const NoteCard = ({
             size={25}
             style={{ cursor: "pointer" }}
             onClick={() => {
-              handleDelete({ contentId, typeOfData, data, toDelete: true });
+              setShowConfirmationPopup({
+                title: "Confirmation!!",
+                message: "Are you sure, you want to delete?",
+                closeBtnText: "Cancel",
+                closeBtnFunction: () => {
+                  setShowConfirmationPopup(null);
+                },
+                confirmBtnText: "Delete",
+                confirmBtnFunction: () => {
+                  handleDelete({ contentId, typeOfData, data, toDelete: true });
+                },
+                successPopupText: "Note deleted successfully",
+                successPopupBtnText: "Okay",
+                successPopupBtnFunction: () => {
+                  setShowConfirmationPopup(null);
+                },
+                errorPopupBtnText: "Okay",
+                errorPopupBtnFunction: () => {
+                  setShowConfirmationPopup(null);
+                },
+                state: "not-set",
+              });
             }}
           />
           <MdEdit
@@ -284,12 +457,34 @@ export const NoteCard = ({
               style={{ cursor: "pointer" }}
               size={25}
               onClick={() => {
-                handleEdit({
-                  contentId,
-                  typeOfData,
-                  data: note,
-                  toDelete: false,
+                setShowConfirmationPopup({
+                  title: "Confirmation!!",
+                  message: "Are you sure, you want to save changes?",
+                  closeBtnText: "Cancel",
+                  closeBtnFunction: () => {
+                    setShowConfirmationPopup(null);
+                  },
+                  confirmBtnText: "Save Changes",
+                  confirmBtnFunction: () => {
+                    handleEdit({
+                      contentId,
+                      typeOfData,
+                      data: note,
+                      toDelete: false,
+                    });
+                  },
+                  successPopupText: "Changes saved successfully",
+                  successPopupBtnText: "Okay",
+                  successPopupBtnFunction: () => {
+                    setShowConfirmationPopup(null);
+                  },
+                  errorPopupBtnText: "Okay",
+                  errorPopupBtnFunction: () => {
+                    setShowConfirmationPopup(null);
+                  },
+                  state: "not-set",
                 });
+
                 setEditText(true);
               }}
             />
