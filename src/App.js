@@ -9,6 +9,8 @@ import ContactScreen from "./Screens/ContactScreen";
 import LandingScreen from "./Screens/LandingScreen";
 import ProfilePage from "./Screens/ProfilePage";
 import { useState } from "react";
+import EditProfileScreen from "./Screens/EditProfileScreen";
+import RecycleBinScreen from "./Screens/RecycleBinScreen";
 
 function App() {
   const [resetUser, setResetUser] = useState(false);
@@ -34,9 +36,11 @@ function App() {
               <HomeScreen resetUser={resetUser} setResetUser={setResetUser} />
             }
           />
-          <Route path="/data" exact element={<GettingStartScreen />} />
+          <Route path="/home" exact element={<GettingStartScreen />} />
           <Route path="/profile" exact element={<ProfilePage />} />
-          <Route path="/data/addData" exact element={<GettingStartScreen />} />
+          <Route path="/editProfile" exact element={<EditProfileScreen />} />
+          <Route path="/recycleBin" exact element={<RecycleBinScreen />} />
+          <Route path="/home/addData" exact element={<GettingStartScreen />} />
         </Routes>
         <Footer />
       </Router>

@@ -53,7 +53,7 @@ function LoginScreen({ setResetUser }) {
           JSON.stringify(response.data.data)
         );
         setResetUser(true);
-        navigate("/data");
+        navigate("/home");
       } else {
         setDisplayMessage({ type: "error", message: response?.data?.message });
       }

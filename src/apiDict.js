@@ -13,3 +13,5 @@ export const getDataUrl = ({ userId, typeOfData }) => {
 export const saveDataUrl = `${url}/add/data`;
 
 export const editDataUrl = `${url}/edit/data`;
+
+export const editProfileUrl = `${url}/edit/profile`;

@@ -10,7 +10,6 @@ import {
 import "./GettingStartscreen.css";
 import Create from "../../Components/Create";
 import axios from "axios";
-import { confirmAlert } from "react-confirm-alert";
 import Loader from "../../Components/Loader";
 import MessageModel from "../../Components/MessageModel";
 import { editDataUrl, getDataUrl } from "../../apiDict";
@@ -45,7 +44,6 @@ const CustomTap = styled.button`
 function GettingStartScreen() {
   const navigate = useNavigate();
   const [createModal, setCreateModal] = useState("");
-  const [loading, setLoading] = useState([]);
   const [dataState, setDataState] = useState("not-set");
   const [result, setResult] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
@@ -215,7 +213,7 @@ function GettingStartScreen() {
       )}
       <div className="container mt-4">
         <div className="container shadow-lg p-3 bg-white rounded">
-          <h1 className="title">DIC Drive Dashboard</h1>
+          <h1 className="title">My Drive Dashboard</h1>
           <div className="border-bottom border-dark d-flex justify-content-start">
             {allType.map((block, i) => {
               return (
@@ -270,7 +268,6 @@ function GettingStartScreen() {
                                 metaData={metaData}
                                 typeOfData={typeOfData}
                                 contentId={contentId}
-                                onClick={() => {}}
                                 handleDownload={handleDownload}
                                 setShowConfirmationPopup={
                                   setShowConfirmationPopup
@@ -361,7 +358,7 @@ function GettingStartScreen() {
         ) : (
           <></>
         )}
-      </div>{" "}
+      </div>
     </>
   );
 }

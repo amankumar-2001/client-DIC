@@ -40,7 +40,7 @@ function HomeScreen({ resetUser, setResetUser }) {
           {user ? (
             <div className="container d-flex" style={{ height: "100%" }}>
               <div className="container text-white d-flex justify-content-center align-items-center">
-                <Link to="/data" className="dashboard">
+                <Link to="/home" className="dashboard">
                   Go to Dashboard--&gt;
                 </Link>
               </div>
@@ -69,9 +69,7 @@ function HomeScreen({ resetUser, setResetUser }) {
               </div>
               <div className="container bg-color">
                 {sign ? (
-                  <LoginScreen
-                    setResetUser={setResetUser}
-                  />
+                  <LoginScreen setResetUser={setResetUser} />
                 ) : (
                   <RegisterScreen setLoading={setLoading} />
                 )}
