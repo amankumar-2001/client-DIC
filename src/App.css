@@ -1,25 +1,24 @@
 /* width */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 0.25rem;
-}
+} */
 
 /* Track */
-::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px rgb(121, 121, 121); 
+/* ::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgb(0, 0, 0); 
   border-radius: 10px;
-}
- 
+} */
+
 /* Handle */
-::-webkit-scrollbar-thumb {
-  background: rgb(0, 0, 0); 
+/* ::-webkit-scrollbar-thumb {
+  background: rgb(255, 255, 255); 
   border-radius: 5px;
-}
+} */
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #1c1c1c; 
-}
-
+/* ::-webkit-scrollbar-thumb:hover {
+  background: #ffffff; 
+} */
 
 .App {
   background-image: url("../images/all.jpg");
@@ -28,5 +27,6 @@
   background-size: cover;
   text-align: center;
   height: 100vh;
-  min-width: 1000px;
+  width: 100%;
+  min-width: 650px;
 }

@@ -10,8 +10,7 @@
 
 .outer{
     display: block;
-    overflow-y: scroll;
-    height: 60vh;
+    height: auto;
 }
 #All{
     background-color: black;

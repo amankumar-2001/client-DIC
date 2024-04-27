@@ -222,7 +222,6 @@ export const ImageCard = ({
         src={metaData?.publicURL}
         alt={metaData?.fileName}
         width={100}
-        isBlog={false}
       />
       <ImagePreview
         src={metaData?.publicURL}
@@ -359,12 +358,7 @@ export const BlogCard = ({
   return (
     <BlogContainer>
       <BlogTop>
-        <CardImage
-          src={metaData?.publicURL}
-          alt={metaData?.fileName}
-          width={50}
-          isBlog={true}
-        />
+        <CardImage src={metaData?.publicURL} />
         <MdDelete
           size={25}
           style={{ cursor: "pointer" }}

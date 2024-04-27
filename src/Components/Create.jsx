@@ -6,6 +6,7 @@ import { saveDataUrl } from "../apiDict";
 import Loader from "./Loader";
 import { useNavigate } from "react-router-dom";
 import { RiArrowDropDownLine } from "react-icons/ri";
+import { connect } from "react-redux";
 
 const ImageComponent = styled.input`
   width: 100%;
@@ -57,8 +58,14 @@ const ErrorComponent = styled.div`
       : ""};
 `;
 
-function Add({ setShow, onClose }) {
-  const [user] = useState(JSON.parse(localStorage.getItem("currentUser")));
+function Add({
+  setShow,
+  onClose,
+  userFirstName,
+  userEmail,
+  userId,
+  userProfileImage,
+}) {
   const [type, setType] = useState("Select the Create Type");
   const [data, setData] = useState("");
   const [displayMessage, setDisplayMessage] = useState({
@@ -83,7 +90,7 @@ function Add({ setShow, onClose }) {
       setLoading(true);
 
       const formData = new FormData();
-      formData.append("userId", user.userId);
+      formData.append("userId", userId);
       formData.append("typeOfData", type);
       formData.append("data", data);
       formData.append("file", file);
@@ -174,7 +181,7 @@ function Add({ setShow, onClose }) {
                   type="email"
                   className="form-control"
                   id="emailInput"
-                  placeholder={user.email}
+                  placeholder={userEmail}
                   disabled
                 />
               </div>
@@ -235,7 +242,10 @@ function Add({ setShow, onClose }) {
               )}
               {type === "Note" || type === "Blog" ? (
                 <div className="form-group">
-                  <label htmlFor="FormControlTextarea1" style={{margin:"4px 0px"}}>
+                  <label
+                    htmlFor="FormControlTextarea1"
+                    style={{ margin: "4px 0px" }}
+                  >
                     {type === "Blog" ? "Write your Blog" : "New Note"}
                   </label>
                   <textarea
@@ -260,4 +270,18 @@ function Add({ setShow, onClose }) {
   );
 }
 
-export default Add;
+const mapDispatchToProps = (dispatch) => {
+  return {};
+};
+
+const mapStateToProps = (state) => {
+  return {
+    userFirstName: state.user.firstName,
+    userLastName: state.user.lastName,
+    userEmail: state.user.email,
+    userId: state.user.userId,
+    userProfileImage: state.user.profileImage,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Add);

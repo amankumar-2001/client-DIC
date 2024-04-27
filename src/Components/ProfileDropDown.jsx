@@ -4,6 +4,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { GoSignOut } from "react-icons/go";
 import { MdOutlineModeEditOutline } from "react-icons/md";
 import { RxCross1 } from "react-icons/rx";
+import { connect } from "react-redux";
 
 const ProfileWrapper = styled.div`
   position: fixed;
@@ -111,17 +112,25 @@ const ImagePreview = styled.img`
   object-fit: cover;
 `;
 
-function ProfileDropDown({ user, onClose, logOut, onClickEditProfile }) {
+function ProfileDropDown({
+  onClose,
+  logOut,
+  onClickEditProfile,
+  userFirstName,
+  userEmail,
+  userId,
+  userProfileImage,
+}) {
   return (
     <ProfileWrapper onClick={onClose}>
       <ProfileDivContainer>
-        <EmailText>{user?.email} </EmailText>
-        {user?.profileImage ? (
-          <ImagePreview src={user?.profileImage} alt="Image Preview" />
+        <EmailText>{userEmail} </EmailText>
+        {userProfileImage ? (
+          <ImagePreview src={userProfileImage} alt="Image Preview" />
         ) : (
           <FaUserCircle size={100} style={{ padding: "4px", color: "black" }} />
         )}
-        <MessageText>Hi, {user?.firstName}!</MessageText>
+        <MessageText>Hi, {userFirstName}!</MessageText>
         <ButtonContainer>
           <EditProfile onClick={onClickEditProfile}>
             <MdOutlineModeEditOutline
@@ -140,4 +149,18 @@ function ProfileDropDown({ user, onClose, logOut, onClickEditProfile }) {
   );
 }
 
-export default ProfileDropDown;
+const mapDispatchToProps = (dispatch) => {
+  return {};
+};
+
+const mapStateToProps = (state) => {
+  return {
+    userFirstName: state.user.firstName,
+    userLastName: state.user.lastName,
+    userEmail: state.user.email,
+    userId: state.user.userId,
+    userProfileImage: state.user.profileImage,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileDropDown);

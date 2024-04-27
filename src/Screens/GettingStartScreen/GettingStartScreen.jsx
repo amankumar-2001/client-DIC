@@ -16,6 +16,9 @@ import { editDataUrl, getDataUrl } from "../../apiDict";
 import { styled } from "styled-components";
 import emptyFileLogo from ".././../logos/empty.png";
 import ConfirmationPopup from "../../Components/ConfirmationPopup";
+import { connect } from "react-redux";
+import { bindActionCreators } from "@reduxjs/toolkit";
+import { loginUser, logoutUser } from "../../Store/Slices/userSlice";
 
 const Container = styled.div`
   display: flex;
@@ -41,7 +44,15 @@ const CustomTap = styled.button`
     index === 0 ? "12px 0px 0px 0px" : index === 5 ? "0px 12px 0px 0px" : ""};
 `;
 
-function GettingStartScreen() {
+function GettingStartScreen({
+  userFirstName,
+  userLastName,
+  userEmail,
+  userId,
+  logoutUser,
+  userProfileImage,
+  loginUser,
+}) {
   const navigate = useNavigate();
   const [createModal, setCreateModal] = useState("");
   const [dataState, setDataState] = useState("not-set");
@@ -54,9 +65,6 @@ function GettingStartScreen() {
     message: "",
   });
 
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("currentUser"))
-  );
   const allType = ["All", "Blogs", "Images", "Files", "Notes"];
 
   const getData = async ({ typeOfData, userId }) => {
@@ -71,7 +79,7 @@ function GettingStartScreen() {
       );
 
       if (!response?.data.ok && response?.data?.tokenError) {
-        localStorage.removeItem("currentUser");
+        logoutUser();
         setDisplayMessage({
           type: "warning",
           message: "Your are logged out!!",
@@ -105,7 +113,7 @@ function GettingStartScreen() {
 
     getData({
       typeOfData: val.endsWith("s") ? val.slice(0, -1) : "",
-      userId: user.userId,
+      userId: userId,
     });
   };
 
@@ -116,14 +124,14 @@ function GettingStartScreen() {
       });
       axios.defaults.withCredentials = true;
       const response = await axios.post(editDataUrl, {
-        userId: user.userId,
+        userId: userId,
         contentId,
         typeOfData,
         data,
         toDelete,
       });
       if (!response?.data?.ok && response?.data?.tokenError) {
-        localStorage.removeItem("currentUser");
+        logoutUser();
         navigate("/contact");
       }
       setShowConfirmationPopup((prev) => {
@@ -144,14 +152,14 @@ function GettingStartScreen() {
       });
       axios.defaults.withCredentials = true;
       const response = await axios.post(editDataUrl, {
-        userId: user.userId,
+        userId: userId,
         contentId,
         typeOfData,
         data,
         toDelete,
       });
       if (!response.data.ok && response?.data?.tokenError) {
-        localStorage.removeItem("currentUser");
+        logoutUser();
         navigate("/contact");
       }
       setShowConfirmationPopup((prev) => {
@@ -193,12 +201,12 @@ function GettingStartScreen() {
   };
 
   useEffect(() => {
-    if (user) {
-      getData({ typeOfData: "", userId: user.userId });
+    if (userId) {
+      getData({ typeOfData: "", userId: userId });
     } else {
       navigate("/contact");
     }
-  }, [user]);
+  }, [userId]);
 
   return (
     <>
@@ -211,8 +219,11 @@ function GettingStartScreen() {
           }}
         />
       )}
-      <div className="container mt-4">
-        <div className="container shadow-lg p-3 bg-white rounded">
+      <div className="p-4" style={{ height: "86%", minWidth: "650px" }}>
+        <div
+          className="shadow-lg p-3 bg-white rounded"
+          style={{ height: "100%", overflow: "scroll" }}
+        >
           <h1 className="title">My Drive Dashboard</h1>
           <div className="border-bottom border-dark d-flex justify-content-start">
             {allType.map((block, i) => {
@@ -349,7 +360,7 @@ function GettingStartScreen() {
             successPopupBtnText={showConfirmationPopup.successPopupBtnText}
             successPopupBtnFunction={() => {
               showConfirmationPopup.successPopupBtnFunction();
-              getData({ typeOfData: "", userId: user.userId });
+              getData({ typeOfData: "", userId: userId });
             }}
             errorPopupBtnText={showConfirmationPopup.errorPopupBtnText}
             errorPopupBtnFunction={showConfirmationPopup.errorPopupBtnFunction}
@@ -363,4 +374,21 @@ function GettingStartScreen() {
   );
 }
 
-export default GettingStartScreen;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loginUser: bindActionCreators(loginUser, dispatch),
+    logoutUser: bindActionCreators(logoutUser, dispatch),
+  };
+};
+
+const mapStateToProps = (state) => {
+  return {
+    userFirstName: state.user.firstName,
+    userLastName: state.user.lastName,
+    userEmail: state.user.email,
+    userId: state.user.userId,
+    userProfileImage: state.user.profileImage,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(GettingStartScreen);

@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ProfileDropDown from "./ProfileDropDown";
+import cloudIcon from "./../logos/image.png";
 import { FaUserCircle } from "react-icons/fa";
+import { connect } from "react-redux";
+import { bindActionCreators } from "@reduxjs/toolkit";
+import { loginUser, logoutUser } from "../Store/Slices/userSlice";
 
 const NavbarContainer = styled.nav`
   background-color: none;
@@ -22,16 +26,6 @@ const NavbarBrand = styled(Link)`
   &:hover {
     color: grey;
   }
-`;
-
-const NavbarTogglerIcon = styled.span`
-  color: #fff;
-`;
-
-const NavbarCollapse = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
 `;
 
 const NavbarNav = styled.div`
@@ -83,34 +77,38 @@ const ImagePreview = styled.img`
   object-fit: cover;
 `;
 
-const Navbar = ({ resetUser, setResetUser }) => {
+const MainIcon = styled.img`
+  width: 63px;
+`;
+
+const Navbar = ({
+  resetUser,
+  setResetUser,
+  userFirstName,
+  userEmail,
+  userId,
+  userProfileImage,
+  logoutUser,
+  loginUser,
+}) => {
   const navigate = useNavigate();
   const [dropDown, setDropDown] = useState(false);
   const location = useLocation();
   const { pathname } = location;
 
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("currentUser"))
-  );
-
   function logOut() {
-    localStorage.removeItem("currentUser");
+    logoutUser();
     navigate("/");
   }
-
-  useEffect(() => {
-    if (resetUser) {
-      setUser(JSON.parse(localStorage.getItem("currentUser")));
-      setResetUser(false);
-    }
-  }, [resetUser]);
 
   return (
     <NavbarContainer className="navbar navbar-expand-lg navbar-dark shadow-lg remain">
       <ContainerFluid className="container-fluid">
-        <NavbarBrand to="/">CRUD Drive</NavbarBrand>
+        <NavbarBrand to="/">
+          <MainIcon src={cloudIcon} />
+        </NavbarBrand>
         <NavbarNav>
-          {user ? (
+          {userId ? (
             <NavItem
               active={pathname === "/home"}
               onClick={() => {
@@ -143,15 +141,15 @@ const Navbar = ({ resetUser, setResetUser }) => {
             </NavLink>
           </NavItem>
         </NavbarNav>
-        {user ? (
+        {userId && !["/"].includes(pathname) ? (
           <>
             <DropdownButton
               onClick={() => {
                 setDropDown((prev) => !prev);
               }}
             >
-              {user?.profileImage ? (
-                <ImagePreview src={user?.profileImage} alt="Image Preview" />
+              {userProfileImage ? (
+                <ImagePreview src={userProfileImage} alt="Image Preview" />
               ) : (
                 <FaUserCircle
                   size={45}
@@ -161,7 +159,6 @@ const Navbar = ({ resetUser, setResetUser }) => {
             </DropdownButton>
             {dropDown ? (
               <ProfileDropDown
-                user={user}
                 onClose={() => {
                   setDropDown(false);
                 }}
@@ -180,4 +177,21 @@ const Navbar = ({ resetUser, setResetUser }) => {
   );
 };
 
-export default Navbar;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loginUser: bindActionCreators(loginUser, dispatch),
+    logoutUser: bindActionCreators(logoutUser, dispatch),
+  };
+};
+
+const mapStateToProps = (state) => {
+  return {
+    userFirstName: state.user.firstName,
+    userLastName: state.user.lastName,
+    userEmail: state.user.email,
+    userId: state.user.userId,
+    userProfileImage: state.user.profileImage,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

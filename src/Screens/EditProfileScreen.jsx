@@ -11,9 +11,12 @@ import { FaUserLock } from "react-icons/fa";
 import Modal from "../Components/Modal";
 import { useNavigate } from "react-router-dom";
 import { TbCircleCheckFilled } from "react-icons/tb";
+import { bindActionCreators } from "@reduxjs/toolkit";
+import { connect } from "react-redux";
+import { loginUser, logoutUser } from "../Store/Slices/userSlice";
 
 const OuterContainer = styled.div`
-  margin-top: 4rem;
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   height: 70vh;
@@ -200,7 +203,15 @@ const Title = styled.div`
   font-size: 40px;
 `;
 
-function EditProfileScreen({}) {
+function EditProfileScreen({
+  userFirstName,
+  userLastName,
+  userEmail,
+  userId,
+  userProfileImage,
+  loginUser,
+  logoutUser,
+}) {
   const [dataState, setDataState] = useState("not-set");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -214,9 +225,7 @@ function EditProfileScreen({}) {
   const [authenticateModel, setAuthenticateModel] = useState(null);
   const [authenticatePasswordType, setAuthenticatePasswordType] =
     useState("password");
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("currentUser"))
-  );
+
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
@@ -227,11 +236,11 @@ function EditProfileScreen({}) {
       setDataState("loading");
 
       const formData = new FormData();
-      formData.append("userId", user.userId);
+      formData.append("userId", userId);
       formData.append("firstName", firstName);
       formData.append("lastName", lastName);
       formData.append("email", email);
-      formData.append("prevEmail", user.email);
+      formData.append("prevEmail", userEmail);
       formData.append("file", profileImage);
       formData.append("password", password);
       formData.append("prevPassword", prevPassword);
@@ -240,10 +249,7 @@ function EditProfileScreen({}) {
       const response = await axios.post(editProfileUrl, formData);
 
       if (response.data.ok) {
-        window.localStorage.setItem(
-          "currentUser",
-          JSON.stringify(response.data.data)
-        );
+        loginUser(response.data.data);
         setDataState("success");
       } else {
         setDataState("error");
@@ -254,26 +260,26 @@ function EditProfileScreen({}) {
   };
 
   useEffect(() => {
-    if (user?.firstName) {
-      setFirstName(user.firstName);
+    if (userFirstName) {
+      setFirstName(userFirstName);
     }
 
-    if (user?.lastName) {
-      setLastName(user.lastName);
+    if (userLastName) {
+      setLastName(userLastName);
     }
 
-    if (user?.profileImage) {
-      setProfileImage(user.profileImage);
+    if (userProfileImage) {
+      setProfileImage(userProfileImage);
     }
 
-    if (user?.email) {
-      setEmail(user.email);
+    if (userEmail) {
+      setEmail(userEmail);
     }
 
-    if (!user) {
+    if (!userId) {
       navigate("/contact");
     }
-  }, [user]);
+  }, [userId]);
 
   useEffect(() => {
     if (cPassword) {
@@ -481,4 +487,21 @@ function EditProfileScreen({}) {
   );
 }
 
-export default EditProfileScreen;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loginUser: bindActionCreators(loginUser, dispatch),
+    logoutUser: bindActionCreators(logoutUser, dispatch),
+  };
+};
+
+const mapStateToProps = (state) => {
+  return {
+    userFirstName: state.user.firstName,
+    userLastName: state.user.lastName,
+    userEmail: state.user.email,
+    userId: state.user.userId,
+    userProfileImage: state.user.profileImage,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditProfileScreen);

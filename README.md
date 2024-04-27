@@ -43,7 +43,7 @@ Clone the repo and set up the application
 
 ## Application Link
 
-- Application link deployed on Vercel: https://client-dic.vercel.app/users/login
+- Application link deployed on Vercel: https://client-dic.vercel.app/
 ## Author
 
 - [@amankumar-2001](https://www.github.com/amankumar-2001)
