@@ -18,19 +18,31 @@
 ## Image UI
 Following are the screenshot of the application:
 
-### Home/Login Page
+### Home Page
 - This is the home page i.e. first page.
-![alt text](./images/Home-login.png)
+![alt text](./images/home.png)
 
-![alt text](./images/Home-register.png)
+![alt text](./images/homeLogin.png)
+
+![alt text](./images/homeRegister.png)
+
+![alt text](./images/honeLogedIn.png)
 
 ### Dashboard
-![alt text](./images/Dashboard.png)
+![alt text](./images/dashboard.png)
 - This is the dashboard.
 
 ### Create Modal
-![alt text](./images/create-model.png)
+![alt text](./images/create.png)
 - This is create modal.
+
+### Edit Profile page
+![alt text](./images/editProfile.png)
+- User can edit profile.
+
+### Contact Page
+![alt text](./images/create.png)
+- This is contact page to mail direct organizer.
 
 ## How to Run the Application:
 

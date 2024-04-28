@@ -15,3 +15,7 @@ export const saveDataUrl = `${url}/add/data`;
 export const editDataUrl = `${url}/edit/data`;
 
 export const editProfileUrl = `${url}/edit/profile`;
+
+export const binDataUrl = `${url}/bin/data`;
+
+export const messageByMailApi = `${url}/message/mail`;
