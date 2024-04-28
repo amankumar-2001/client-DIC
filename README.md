@@ -16,11 +16,13 @@
 - Kept the layout of the application simple to have any modification or enhancement in future to evolve the layout as required
 
 ## Image UI
+
 Following are the screenshot of the application:
 
 ### Home Page
+
 - This is the home page i.e. first page.
-![alt text](./images/home.png)
+  ![alt text](./images/home.png)
 
 ![alt text](./images/homeLogin.png)
 
@@ -29,19 +31,27 @@ Following are the screenshot of the application:
 ![alt text](./images/honeLogedIn.png)
 
 ### Dashboard
+
 ![alt text](./images/dashboard.png)
+
 - This is the dashboard.
 
 ### Create Modal
+
 ![alt text](./images/create.png)
+
 - This is create modal.
 
 ### Edit Profile page
+
 ![alt text](./images/editProfile.png)
+
 - User can edit profile.
 
 ### Contact Page
-![alt text](./images/create.png)
+
+![alt text](./images/contact.png)
+
 - This is contact page to mail direct organizer.
 
 ## How to Run the Application:
@@ -56,7 +66,7 @@ Clone the repo and set up the application
 ## Application Link
 
 - Application link deployed on Vercel: https://client-dic.vercel.app/
+
 ## Author
 
 - [@amankumar-2001](https://www.github.com/amankumar-2001)
-
