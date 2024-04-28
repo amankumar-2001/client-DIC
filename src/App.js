@@ -5,7 +5,7 @@ import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import AboutScreen from "./Screens/AboutScreen";
 import HomeScreen from "./Screens/HomeScreen";
-import GettingStartScreen from "./Screens/GettingStartScreen/GettingStartScreen";
+import GettingStartScreen from "./Screens/GettingStartScreen";
 import ContactScreen from "./Screens/ContactScreen";
 import EditProfileScreen from "./Screens/EditProfileScreen";
 import RecycleBinScreen from "./Screens/RecycleBinScreen";

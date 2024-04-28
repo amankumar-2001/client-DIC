@@ -163,7 +163,6 @@ function HomeScreen({
                   </p>
                 </DashboardText>
               </StyledLink>
-
               <StyledLink
                 onClick={() => {
                   logoutUser();
@@ -176,24 +175,7 @@ function HomeScreen({
                 />
                 Use another account
               </StyledLink>
-              {!userId && (
-                <StyledLink
-                  onClick={() => {
-                    logoutUser();
-                  }}
-                >
-                  <IoPersonAdd
-                    size={40}
-                    style={{
-                      marginLeft: "12px",
-                      padding: "4px",
-                      color: "white",
-                    }}
-                  />
-                  Create Account
-                </StyledLink>
-              )}
-              {userId && false && (
+              {false && (
                 <StyledLink
                   onClick={() => {
                     logoutUser();
@@ -210,23 +192,21 @@ function HomeScreen({
                   Remove Account
                 </StyledLink>
               )}
-              {userId && (
-                <StyledLink
-                  onClick={() => {
-                    logoutUser();
+              <StyledLink
+                onClick={() => {
+                  logoutUser();
+                }}
+              >
+                <GoSignOut
+                  size={40}
+                  style={{
+                    marginLeft: "12px",
+                    padding: "4px",
+                    color: "white",
                   }}
-                >
-                  <GoSignOut
-                    size={40}
-                    style={{
-                      marginLeft: "12px",
-                      padding: "4px",
-                      color: "white",
-                    }}
-                  />
-                  Signed out
-                </StyledLink>
-              )}
+                />
+                Signed out
+              </StyledLink>
             </DashboardLink>
           ) : action === "login" ? (
             <DashboardLink>

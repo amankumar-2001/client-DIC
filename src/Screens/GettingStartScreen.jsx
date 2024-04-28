@@ -6,19 +6,18 @@ import {
   FileCard,
   BlogCard,
   NoteCard,
-} from "../../Components/Elements";
-import "./GettingStartscreen.css";
-import Create from "../../Components/Create";
+} from "../Components/Elements";
+import Create from "../Components/Create";
 import axios from "axios";
-import Loader from "../../Components/Loader";
-import MessageModel from "../../Components/MessageModel";
-import { editDataUrl, getDataUrl } from "../../apiDict";
+import Loader from "../Components/Loader";
+import MessageModel from "../Components/MessageModel";
+import { editDataUrl, getDataUrl } from "../apiDict";
 import { styled } from "styled-components";
-import emptyFileLogo from ".././../logos/empty.png";
-import ConfirmationPopup from "../../Components/ConfirmationPopup";
+import emptyFileLogo from "../logos/empty.png";
+import ConfirmationPopup from "../Components/ConfirmationPopup";
 import { connect } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
-import { loginUser, logoutUser } from "../../Store/Slices/userSlice";
+import { loginUser, logoutUser } from "../Store/Slices/userSlice";
 
 const Container = styled.div`
   display: flex;
@@ -42,6 +41,18 @@ const EmptyDivContainer = styled.div`
 const CustomTap = styled.button`
   border-radius: ${({ index }) =>
     index === 0 ? "12px 0px 0px 0px" : index === 5 ? "0px 12px 0px 0px" : ""};
+  color: black;
+  font-size: 1rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    background-color: black !important;
+    color: white !important;
+  }
 `;
 
 function GettingStartScreen({
@@ -232,7 +243,7 @@ function GettingStartScreen({
                   key={i}
                   index={i}
                   id={block}
-                  className="px-4 py-1 btn2 element border-end border-dark"
+                  className="px-4 py-1 btn2 border-end border-dark"
                   onClick={() => {
                     setCurrentBlock(block);
                     filterByType(block);
@@ -244,7 +255,7 @@ function GettingStartScreen({
             })}
             <CustomTap
               index={5}
-              className="px-4 py-1 btn2 element"
+              className="px-4 py-1 btn2"
               data-bs-toggle="modal"
               data-bs-target="#staticBackdrop"
               onClick={() => setCreateModal("show")}
@@ -252,7 +263,10 @@ function GettingStartScreen({
               Add
             </CustomTap>
           </div>
-          <div className="outer mt-2">
+          <div
+            className="outer mt-2"
+            style={{ display: "block", height: "auto" }}
+          >
             <div
               className="d-flex"
               style={{ flexDirection: "column", height: "100%" }}
