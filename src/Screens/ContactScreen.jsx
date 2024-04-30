@@ -145,7 +145,7 @@ const NameContainer = styled.div`
   width: 100%;
 `;
 
-function ContactScreen({ userId }) {
+function ContactScreen({}) {
   const [dataState, setDataState] = useState("not-set");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -159,7 +159,6 @@ function ContactScreen({ userId }) {
       setDataState("loading");
 
       const response = await axios.post(messageByMailApi, {
-        userId,
         firstName,
         lastName,
         email,
@@ -167,6 +166,10 @@ function ContactScreen({ userId }) {
       });
 
       if (response.data.ok) {
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setMessage("");
         setDataState("success");
       } else {
         setDataState("error");
@@ -229,14 +232,12 @@ function ContactScreen({ userId }) {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               />
-              <SubmitButton
-                type="button"
-                disabled={dataState === "loading"}
-                onClick={() => {
-                  handleSubmit();
-                }}
-              >
-                Send
+              <SubmitButton type="submit" disabled={dataState === "loading"}>
+                {dataState === "loading" ? (
+                  <Loader size={"5px"} color={"white"} />
+                ) : (
+                  "Send"
+                )}
               </SubmitButton>
             </CustomForm>
           </EmailContainer>

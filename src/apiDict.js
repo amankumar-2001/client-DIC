@@ -18,4 +18,4 @@ export const editProfileUrl = `${url}/edit/profile`;
 
 export const binDataUrl = `${url}/bin/data`;
 
-export const messageByMailApi = `${url}/message/mail`;
+export const messageByMailApi = `${url}/contact-us/message`;
