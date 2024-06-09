@@ -24,4 +24,8 @@ export const getExploreUrl = ({ limit }) => {
   return `${url}/drive/explore?limit=${limit}`;
 };
 
+export const getLandingExploreUrl = ({ limit }) => {
+  return `${url}/drive/landing/explore?limit=${limit}`;
+};
+
 export const messageByMailApi = `${url}/contact-us/message`;

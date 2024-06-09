@@ -12,6 +12,7 @@ import { IoPersonRemoveSharp } from "react-icons/io5";
 import { MdOutlineAccountCircle } from "react-icons/md";
 import { IoPersonAdd } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
+import Explore from "./Explore";
 
 const Container = styled.div`
   width: 100%;
@@ -29,7 +30,21 @@ const BarWrap = styled.div`
   flex-wrap: wrap;
   border-radius: 6px;
   width: 1000px;
+  overflow: scroll;
   margin: 24px;
+  height: 83vh;
+`;
+
+const UpperWrap = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: #000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+  width: 1000px;
+  margin: 24px;
+  border-bottom: 2px dotted white;
 `;
 
 const LeftContainer = styled.div`
@@ -127,61 +142,82 @@ function HomeScreen({
   return (
     <Container>
       <BarWrap>
-        <LeftContainer className="container left">
-          <Operation>Create</Operation>
-          <Operation>Read</Operation>
-          <Operation>Update</Operation>
-          <Operation>Delete</Operation>
-        </LeftContainer>
-        <RightContainer className="container right">
-          {userId ? (
-            <DashboardLink>
-              <StyledLink
-                onClick={() => {
-                  navigate("/home");
-                }}
-              >
-                {userProfileImage ? (
-                  <ImagePreview src={userProfileImage} alt="Image Preview" />
-                ) : (
-                  <FaUserCircle
-                    size={45}
+        <UpperWrap>
+          <LeftContainer className="container left">
+            <Operation>Create</Operation>
+            <Operation>Read</Operation>
+            <Operation>Update</Operation>
+            <Operation>Delete</Operation>
+          </LeftContainer>
+          <RightContainer className="container right">
+            {userId ? (
+              <DashboardLink>
+                <StyledLink
+                  onClick={() => {
+                    navigate("/home");
+                  }}
+                >
+                  {userProfileImage ? (
+                    <ImagePreview src={userProfileImage} alt="Image Preview" />
+                  ) : (
+                    <FaUserCircle
+                      size={45}
+                      style={{
+                        marginLeft: "6px",
+                        padding: "4px",
+                        color: "white",
+                      }}
+                    />
+                  )}
+
+                  <DashboardText>
+                    <p style={{ margin: "0px", textAlign: "left" }}>
+                      {userFirstName}
+                    </p>
+                    <p style={{ margin: "0px", textAlign: "left" }}>
+                      {userEmail}
+                    </p>
+                  </DashboardText>
+                </StyledLink>
+                <StyledLink
+                  onClick={() => {
+                    logoutUser();
+                    setAction("login");
+                  }}
+                >
+                  <MdOutlineAccountCircle
+                    size={50}
                     style={{
                       marginLeft: "6px",
                       padding: "4px",
                       color: "white",
                     }}
                   />
+                  Use another account
+                </StyledLink>
+                {false && (
+                  <StyledLink
+                    onClick={() => {
+                      logoutUser();
+                    }}
+                  >
+                    <IoPersonRemoveSharp
+                      size={40}
+                      style={{
+                        marginLeft: "12px",
+                        padding: "4px",
+                        color: "white",
+                      }}
+                    />
+                    Remove Account
+                  </StyledLink>
                 )}
-
-                <DashboardText>
-                  <p style={{ margin: "0px", textAlign: "left" }}>
-                    {userFirstName}
-                  </p>
-                  <p style={{ margin: "0px", textAlign: "left" }}>
-                    {userEmail}
-                  </p>
-                </DashboardText>
-              </StyledLink>
-              <StyledLink
-                onClick={() => {
-                  logoutUser();
-                  setAction("login");
-                }}
-              >
-                <MdOutlineAccountCircle
-                  size={50}
-                  style={{ marginLeft: "6px", padding: "4px", color: "white" }}
-                />
-                Use another account
-              </StyledLink>
-              {false && (
                 <StyledLink
                   onClick={() => {
                     logoutUser();
                   }}
                 >
-                  <IoPersonRemoveSharp
+                  <GoSignOut
                     size={40}
                     style={{
                       marginLeft: "12px",
@@ -189,72 +225,62 @@ function HomeScreen({
                       color: "white",
                     }}
                   />
-                  Remove Account
+                  Signed out
                 </StyledLink>
-              )}
-              <StyledLink
-                onClick={() => {
-                  logoutUser();
-                }}
-              >
-                <GoSignOut
-                  size={40}
-                  style={{
-                    marginLeft: "12px",
-                    padding: "4px",
-                    color: "white",
+              </DashboardLink>
+            ) : action === "login" ? (
+              <DashboardLink>
+                <LoginScreen
+                  onClickBack={() => {
+                    setAction("");
                   }}
                 />
-                Signed out
-              </StyledLink>
-            </DashboardLink>
-          ) : action === "login" ? (
-            <DashboardLink>
-              <LoginScreen
-                onClickBack={() => {
-                  setAction("");
-                }}
-              />
-            </DashboardLink>
-          ) : action === "register" ? (
-            <DashboardLink>
-              <RegisterScreen
-                onClickBack={() => {
-                  setAction("");
-                }}
-              />
-            </DashboardLink>
-          ) : (
-            <DashboardLink>
-              <StyledLink
-                onClick={() => {
-                  setAction("login");
-                }}
-              >
-                <MdOutlineAccountCircle
-                  size={50}
-                  style={{ marginLeft: "6px", padding: "4px", color: "white" }}
-                />
-                Sign In
-              </StyledLink>
-              <StyledLink
-                onClick={() => {
-                  setAction("register");
-                }}
-              >
-                <IoPersonAdd
-                  size={40}
-                  style={{
-                    marginLeft: "12px",
-                    padding: "4px",
-                    color: "white",
+              </DashboardLink>
+            ) : action === "register" ? (
+              <DashboardLink>
+                <RegisterScreen
+                  onClickBack={() => {
+                    setAction("");
                   }}
                 />
-                Create Account
-              </StyledLink>
-            </DashboardLink>
-          )}
-        </RightContainer>
+              </DashboardLink>
+            ) : (
+              <DashboardLink>
+                <StyledLink
+                  onClick={() => {
+                    setAction("login");
+                  }}
+                >
+                  <MdOutlineAccountCircle
+                    size={50}
+                    style={{
+                      marginLeft: "6px",
+                      padding: "4px",
+                      color: "white",
+                    }}
+                  />
+                  Sign In
+                </StyledLink>
+                <StyledLink
+                  onClick={() => {
+                    setAction("register");
+                  }}
+                >
+                  <IoPersonAdd
+                    size={40}
+                    style={{
+                      marginLeft: "12px",
+                      padding: "4px",
+                      color: "white",
+                    }}
+                  />
+                  Create Account
+                </StyledLink>
+              </DashboardLink>
+            )}
+          </RightContainer>
+        </UpperWrap>
+        <Explore screen={"landing"} />
       </BarWrap>
     </Container>
   );

@@ -1,7 +1,7 @@
 import { bindActionCreators } from "@reduxjs/toolkit";
 import React, { useEffect, useState } from "react";
 import { loginUser, logoutUser } from "../Store/Slices/userSlice";
-import { getExploreUrl } from "../apiDict";
+import { getExploreUrl, getLandingExploreUrl } from "../apiDict";
 import { json, useNavigate } from "react-router-dom";
 import { DONE, LOADING } from "../Utils/constant";
 import Loader from "../Components/Loader";
@@ -34,16 +34,19 @@ const Header = styled.div`
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  position: sticky;
+  position: ${({ landingPage }) => (landingPage ? "" : "sticky")};
   top: 0px;
   z-index: 2;
   border-radius: 4px;
   height: 7%;
+  color: ${({ landingPage }) => (landingPage ? "white" : "")};
+  align-items: center;
+  flex-direction: ${({ landingPage }) => (landingPage ? "column" : "row")};
 `;
 
 const DataContainer = styled.div`
   display: flex;
-  overflow: scroll;
+  overflow: ${({ landingPage }) => (landingPage ? "" : "scroll")};
   justify-content: center;
   flex-wrap: wrap;
   height: 100%;
@@ -65,6 +68,7 @@ const BlogContainer = styled.div`
   width: 50%;
   min-width: 500px;
   margin: 12px;
+  border: 1px solid ${({ landingPage }) => (landingPage ? "white" : "black")};
 `;
 
 const ReadMoreDiv = styled.p`
@@ -97,10 +101,10 @@ const UserInfo = styled.div`
 `;
 
 const BlogImage = styled.img`
-  max-width: 500px;
+  max-width: 498px;
 `;
 
-function Explore({ userId }) {
+function Explore({ userId, screen = "home" }) {
   const navigate = useNavigate();
   const [dataState, setDataState] = useState("not-set");
   const [result, setResult] = useState([]);
@@ -176,9 +180,69 @@ function Explore({ userId }) {
     }
   };
 
+  const getExplore = async () => {
+    try {
+      setDataState("loading");
+      axios.defaults.withCredentials = true;
+      const response = await axios.get(
+        getLandingExploreUrl({
+          limit: 5,
+        })
+      );
+
+      if (response.data && response.data.ok) {
+        setResult(
+          response.data.data.map((blog) => {
+            const givenDate = DateTime.fromISO(blog.updatedAt, { zone: "utc" });
+            const currentDate = DateTime.now().setZone("utc");
+
+            const differenceInDays = currentDate.diff(givenDate, "days").days;
+            const differenceInHours = currentDate.diff(
+              givenDate,
+              "hours"
+            ).hours;
+            const differenceInMinutes = currentDate.diff(
+              givenDate,
+              "minutes"
+            ).minutes;
+            const differenceInSeconds = currentDate.diff(
+              givenDate,
+              "seconds"
+            ).seconds;
+
+            let postedAt = 0;
+
+            if (Math.round(differenceInDays) !== 0) {
+              postedAt = `${Math.round(differenceInDays)} days`;
+            } else if (Math.round(differenceInHours) !== 0) {
+              postedAt = `${Math.round(differenceInHours)} hours`;
+            } else if (Math.round(differenceInMinutes) !== 0) {
+              postedAt = `${Math.round(differenceInMinutes)} minutes`;
+            } else {
+              postedAt = `${Math.round(differenceInSeconds)} seconds`;
+            }
+
+            return {
+              ...blog,
+              expand: false,
+              postedAt,
+            };
+          })
+        );
+      } else {
+        setDisplayMessage({ type: "error", message: response.data.message });
+      }
+      setDataState("done");
+    } catch (err) {
+      setDisplayMessage({ type: "error", message: err.message });
+    }
+  };
+
   useEffect(() => {
     if (userId) {
       getData();
+    } else if (screen === "landing") {
+      getExplore();
     } else {
       navigate("/contact");
     }
@@ -186,16 +250,16 @@ function Explore({ userId }) {
 
   return (
     <Container>
-      <Header>
-        <h1 className="title">Explore</h1>
+      <Header landingPage={screen === "landing"}>
+        <h1 className="title">{screen === "landing" ? "Latest Blog" : "Explore"}</h1>
       </Header>
-      <DataContainer>
+      <DataContainer landingPage={screen === "landing"}>
         {dataState === LOADING ? (
           <Loader size={20} />
         ) : dataState === DONE && result.length > 0 ? (
           result.map((blog, index) => {
             return (
-              <BlogContainer key={index}>
+              <BlogContainer key={index} landingPage={screen === "landing"}>
                 <UserInfoDiv>
                   {blog.userInfo?.profileImage ? (
                     <UserDisplayProfile src={blog.userInfo?.profileImage} />
@@ -216,7 +280,10 @@ function Explore({ userId }) {
                     </UserInfo>
                   </UserInfo>
                 </UserInfoDiv>
-                <BlogImage src={blog.metaData.publicURL} />
+                <BlogImage
+                  src={blog.metaData.publicURL}
+                  landingPage={screen === "landing"}
+                />
                 <BlockTitle>
                   {blog.data.length > 400 && blog.expand === false
                     ? blog.data.substring(0, 400) + "..."
