@@ -19,10 +19,10 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { loginUser, logoutUser } from "../Store/Slices/userSlice";
 import AddData from "../Components/addData";
-import CreateDropDown from "../Components/CreateDropDown";
-import { BIN, DONE, HOME, LOADING } from "../Utils/constant";
+import { BIN, DONE, EXPLORE, HOME, LOADING } from "../Utils/constant";
 import SideBar from "../Components/SideBar";
 import Bin from "./Bin";
+import Explore from "./Explore";
 
 const Container = styled.div`
   display: flex;
@@ -417,6 +417,8 @@ function GettingStartScreen({
               </>
             ) : selectedSideBarTab === BIN ? (
               <Bin />
+            ) : selectedSideBarTab === EXPLORE ? (
+              <Explore />
             ) : (
               <></>
             )}

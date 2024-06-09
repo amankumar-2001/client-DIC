@@ -20,4 +20,8 @@ export const binDataUrl = ({ userId }) => {
   return `${url}/bin/data?userId=${userId}`;
 };
 
+export const getExploreUrl = ({ limit }) => {
+  return `${url}/drive/explore?limit=${limit}`;
+};
+
 export const messageByMailApi = `${url}/contact-us/message`;

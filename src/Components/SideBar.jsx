@@ -159,25 +159,23 @@ const Sidebar = ({
           )}
         </SideBarItem>
 
-        {false && (
-          <SideBarItem
-            collapse={collapse}
-            active={selectedSideBarTab === EXPLORE}
-            onClick={() => {
-              setSelectedSideBarTab(EXPLORE);
-            }}
-          >
-            <IconWrapper>
-              <MdOutlineWidgets size={25} />
-            </IconWrapper>
+        <SideBarItem
+          collapse={collapse}
+          active={selectedSideBarTab === EXPLORE}
+          onClick={() => {
+            setSelectedSideBarTab(EXPLORE);
+          }}
+        >
+          <IconWrapper>
+            <MdOutlineWidgets size={25} />
+          </IconWrapper>
 
-            {!collapse && (
-              <SideBarLink active={selectedSideBarTab === EXPLORE}>
-                Explore
-              </SideBarLink>
-            )}
-          </SideBarItem>
-        )}
+          {!collapse && (
+            <SideBarLink active={selectedSideBarTab === EXPLORE}>
+              Explore
+            </SideBarLink>
+          )}
+        </SideBarItem>
 
         {false && (
           <SideBarItem
