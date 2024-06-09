@@ -16,6 +16,8 @@ export const editDataUrl = `${url}/edit/data`;
 
 export const editProfileUrl = `${url}/edit/profile`;
 
-export const binDataUrl = `${url}/bin/data`;
+export const binDataUrl = ({ userId }) => {
+  return `${url}/bin/data?userId=${userId}`;
+};
 
 export const messageByMailApi = `${url}/contact-us/message`;

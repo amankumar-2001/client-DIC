@@ -5,7 +5,7 @@ import { MdError, MdOutlineModeEditOutline } from "react-icons/md";
 import Loader from "../Components/Loader";
 import axios from "axios";
 import { editProfileUrl } from "../apiDict";
-import { IoIosEyeOff } from "react-icons/io";
+import { IoIosEyeOff, IoMdArrowRoundBack } from "react-icons/io";
 import { IoEyeSharp } from "react-icons/io5";
 import { FaUserLock } from "react-icons/fa";
 import Modal from "../Components/Modal";
@@ -203,6 +203,12 @@ const Title = styled.div`
   font-size: 40px;
 `;
 
+const Header = styled.div`
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 9fr;
+`;
+
 function EditProfileScreen({
   userFirstName,
   userLastName,
@@ -294,7 +300,19 @@ function EditProfileScreen({
   return (
     <OuterContainer>
       <InnerContainer>
-        <TopHeading>Edit Profile</TopHeading>
+        <Header>
+          <IoMdArrowRoundBack
+            size={30}
+            style={{
+              color: "black",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              navigate("/home");
+            }}
+          />
+          <TopHeading>Edit Profile</TopHeading>
+        </Header>
         <CustomForm onSubmit={handleSubmit}>
           <EditProfileImage>
             {imagePreviewUrl || profileImage ? (

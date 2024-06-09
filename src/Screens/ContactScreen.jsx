@@ -8,6 +8,8 @@ import { connect } from "react-redux";
 import { loginUser, logoutUser } from "../Store/Slices/userSlice";
 import { FaPhoneAlt } from "react-icons/fa";
 import { TfiEmail } from "react-icons/tfi";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 const OuterContainer = styled.div`
   margin-top: 20px;
@@ -145,12 +147,19 @@ const NameContainer = styled.div`
   width: 100%;
 `;
 
+const Header = styled.div`
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 9fr;
+`;
+
 function ContactScreen({}) {
   const [dataState, setDataState] = useState("not-set");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -184,7 +193,19 @@ function ContactScreen({}) {
       <InnerContainer>
         <Container>
           <AboutText>
-            <TopHeading>Contact Us</TopHeading>
+            <Header>
+              <IoMdArrowRoundBack
+                size={40}
+                style={{
+                  color: "black",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  navigate("/home");
+                }}
+              />
+              <TopHeading>Contact Us</TopHeading>
+            </Header>
             <p>
               Contact us anytime!
               <br />

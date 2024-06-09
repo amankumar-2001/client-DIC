@@ -18,10 +18,30 @@ import ConfirmationPopup from "../Components/ConfirmationPopup";
 import { connect } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { loginUser, logoutUser } from "../Store/Slices/userSlice";
+import AddData from "../Components/addData";
+import CreateDropDown from "../Components/CreateDropDown";
+import { BIN, DONE, HOME, LOADING } from "../Utils/constant";
+import SideBar from "../Components/SideBar";
+import Bin from "./Bin";
 
 const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
+`;
+
+const OuterContainer = styled.div`
+  display: flex;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 0.25rem;
+  height: 100%;
+  gap: 12px;
+`;
+
+const InnerContainer = styled.div`
+  padding-left: 12px;
+  width: 100%;
 `;
 
 const BlockTitle = styled.h2`
@@ -40,7 +60,25 @@ const EmptyDivContainer = styled.div`
 
 const CustomTap = styled.button`
   border-radius: ${({ index }) =>
-    index === 0 ? "12px 0px 0px 0px" : index === 5 ? "0px 12px 0px 0px" : ""};
+    index === 0 ? "12px 0px 0px 0px" : index === 4 ? "0px 12px 0px 0px" : ""};
+  color: ${({ active }) => (active ? "white" : "black")};
+  font-size: 1rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 6px 16px;
+
+  &:hover {
+    opacity: ${({ active }) => (active ? "1" : "0.5")};
+  }
+`;
+
+const TabContainer = styled.div``;
+
+const CreateNew = styled.div`
+  border-radius: 12px;
   color: black;
   font-size: 1rem;
   cursor: pointer;
@@ -48,11 +86,28 @@ const CustomTap = styled.button`
   border: none;
   font-weight: 600;
   text-decoration: none;
+  padding: 6px 20px;
+  border: 1px solid black;
+  margin-bottom: 4px;
+`;
 
-  &:hover {
-    background-color: black !important;
-    color: white !important;
-  }
+const Header = styled.div`
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  position: sticky;
+  top: 0px;
+  z-index: 2;
+  border-radius: 4px;
+`;
+
+const DataContainer = styled.div`
+  display: block;
+  height: auto;
+  margin-top: 0.5rem;
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+  border-radius: 8px 0px 0px 0px;
 `;
 
 function GettingStartScreen({
@@ -65,7 +120,8 @@ function GettingStartScreen({
   loginUser,
 }) {
   const navigate = useNavigate();
-  const [createModal, setCreateModal] = useState("");
+  const [selectedTab, setSelectedTab] = useState(null);
+  const [selectedSideBarTab, setSelectedSideBarTab] = useState(HOME);
   const [dataState, setDataState] = useState("not-set");
   const [result, setResult] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
@@ -108,24 +164,6 @@ function GettingStartScreen({
     } catch (err) {
       setDisplayMessage({ type: "error", message: err.message });
     }
-  };
-
-  const filterByType = (val) => {
-    allType.forEach((typeId) => {
-      let path = document.getElementById(typeId);
-      if (typeId === val) {
-        path.style.background = "black";
-        path.style.color = "white";
-      } else {
-        path.style.background = "none";
-        path.style.color = "black";
-      }
-    });
-
-    getData({
-      typeOfData: val.endsWith("s") ? val.slice(0, -1) : "",
-      userId: userId,
-    });
   };
 
   const handleDelete = async ({ contentId, typeOfData, data, toDelete }) => {
@@ -212,12 +250,17 @@ function GettingStartScreen({
   };
 
   useEffect(() => {
-    if (userId) {
-      getData({ typeOfData: "", userId: userId });
+    if (userId && currentBlock) {
+      getData({
+        typeOfData: currentBlock.endsWith("s") ? currentBlock.slice(0, -1) : "",
+        userId: userId,
+      });
     } else {
       navigate("/contact");
     }
-  }, [userId]);
+  }, [userId, currentBlock]);
+
+  console.log({ selectedSideBarTab });
 
   return (
     <>
@@ -231,137 +274,144 @@ function GettingStartScreen({
         />
       )}
       <div className="p-4" style={{ height: "86%", minWidth: "650px" }}>
-        <div
-          className="shadow-lg p-3 bg-white rounded"
-          style={{ height: "100%", overflow: "scroll" }}
-        >
-          <h1 className="title">My Drive Dashboard</h1>
-          <div className="border-bottom border-dark d-flex justify-content-start">
-            {allType.map((block, i) => {
-              return (
-                <CustomTap
-                  key={i}
-                  index={i}
-                  id={block}
-                  className="px-4 py-1 btn2 border-end border-dark"
-                  onClick={() => {
-                    setCurrentBlock(block);
-                    filterByType(block);
-                  }}
-                >
-                  {block}
-                </CustomTap>
-              );
-            })}
-            <CustomTap
-              index={5}
-              className="px-4 py-1 btn2"
-              data-bs-toggle="modal"
-              data-bs-target="#staticBackdrop"
-              onClick={() => setCreateModal("show")}
-            >
-              Add
-            </CustomTap>
-          </div>
-          <div
-            className="outer mt-2"
-            style={{ display: "block", height: "auto" }}
-          >
-            <div
-              className="d-flex"
-              style={{ flexDirection: "column", height: "100%" }}
-            >
-              {dataState === "loading" ? (
-                <div className="container">
-                  <Loader size={20} />
-                </div>
-              ) : dataState === "done" && totalItems != 0 ? (
-                ["Note", "File", "Image", "Blog"].map((block, i) => {
-                  return (
-                    <div key={i}>
-                      {result[block].length > 0 && (
-                        <BlockTitle>{block}s:</BlockTitle>
-                      )}
-                      <Container>
-                        {result[block].map(
-                          ({ data, metaData, typeOfData, contentId }, i) => {
-                            return block === "Image" ? (
-                              <ImageCard
-                                key={i}
-                                handleDelete={handleDelete}
-                                data={data}
-                                metaData={metaData}
-                                typeOfData={typeOfData}
-                                contentId={contentId}
-                                handleDownload={handleDownload}
-                                setShowConfirmationPopup={
-                                  setShowConfirmationPopup
-                                }
-                              />
-                            ) : block === "File" ? (
-                              <FileCard
-                                key={i}
-                                handleDelete={handleDelete}
-                                data={data}
-                                metaData={metaData}
-                                typeOfData={typeOfData}
-                                contentId={contentId}
-                                handleDownload={handleDownload}
-                                setShowConfirmationPopup={
-                                  setShowConfirmationPopup
-                                }
-                              />
-                            ) : block === "Blog" ? (
-                              <BlogCard
-                                key={i}
-                                handleDelete={handleDelete}
-                                data={data}
-                                metaData={metaData}
-                                typeOfData={typeOfData}
-                                contentId={contentId}
-                                setShowConfirmationPopup={
-                                  setShowConfirmationPopup
-                                }
-                              />
-                            ) : (
-                              <NoteCard
-                                key={i}
-                                handleDelete={handleDelete}
-                                data={data}
-                                metaData={metaData}
-                                typeOfData={typeOfData}
-                                contentId={contentId}
-                                handleEdit={handleEdit}
-                                setShowConfirmationPopup={
-                                  setShowConfirmationPopup
-                                }
-                              />
-                            );
-                          }
-                        )}
-                      </Container>
-                    </div>
-                  );
-                })
-              ) : (
-                <EmptyDivContainer>
-                  <img
-                    src={emptyFileLogo}
-                    style={{ width: "200px", height: "200px" }}
-                  />
-                </EmptyDivContainer>
-              )}
-            </div>
-          </div>
-        </div>
-        {createModal && (
-          <Create
-            setShow={setCreateModal}
-            onClose={() => {
-              filterByType(currentBlock);
-            }}
+        <OuterContainer>
+          <SideBar
+            selectedTabForNew={selectedTab}
+            setSelectedTabForNew={setSelectedTab}
+            setCurrentBlock={setCurrentBlock}
+            selectedSideBarTab={selectedSideBarTab}
+            setSelectedSideBarTab={setSelectedSideBarTab}
           />
-        )}
+          <InnerContainer style={{ height: "100%" }}>
+            {selectedSideBarTab === HOME ? (
+              <>
+                <Header>
+                  <h1 className="title">My Drive Dashboard</h1>
+                  <TabContainer>
+                    {allType.map((block, i) => {
+                      return (
+                        <CustomTap
+                          key={i}
+                          index={i}
+                          id={block}
+                          active={block === currentBlock}
+                          onClick={() => {
+                            setCurrentBlock(block);
+                            setSelectedTab(null);
+                          }}
+                        >
+                          {block}
+                        </CustomTap>
+                      );
+                    })}
+                  </TabContainer>
+                </Header>
+                <DataContainer
+                  style={{ height: "93%", overflow: "scroll", padding: "8px" }}
+                >
+                  <div
+                    className="d-flex"
+                    style={{ flexDirection: "column", height: "100%" }}
+                  >
+                    {selectedTab ? (
+                      <AddData
+                        selectedTab={selectedTab}
+                        setSelectedTab={setSelectedTab}
+                        setCurrentBlock={setCurrentBlock}
+                      />
+                    ) : dataState === LOADING ? (
+                      <div className="container">
+                        <Loader size={20} />
+                      </div>
+                    ) : dataState === DONE && totalItems != 0 ? (
+                      ["Note", "File", "Image", "Blog"].map((block, i) => {
+                        return (
+                          <div key={i}>
+                            {result[block].length > 0 && (
+                              <BlockTitle>{block}s:</BlockTitle>
+                            )}
+                            <Container>
+                              {result[block].map(
+                                (
+                                  { data, metaData, typeOfData, contentId },
+                                  i
+                                ) => {
+                                  return block === "Image" ? (
+                                    <ImageCard
+                                      key={i}
+                                      handleDelete={handleDelete}
+                                      data={data}
+                                      metaData={metaData}
+                                      typeOfData={typeOfData}
+                                      contentId={contentId}
+                                      handleDownload={handleDownload}
+                                      setShowConfirmationPopup={
+                                        setShowConfirmationPopup
+                                      }
+                                    />
+                                  ) : block === "File" ? (
+                                    <FileCard
+                                      key={i}
+                                      handleDelete={handleDelete}
+                                      data={data}
+                                      metaData={metaData}
+                                      typeOfData={typeOfData}
+                                      contentId={contentId}
+                                      handleDownload={handleDownload}
+                                      setShowConfirmationPopup={
+                                        setShowConfirmationPopup
+                                      }
+                                    />
+                                  ) : block === "Blog" ? (
+                                    <BlogCard
+                                      key={i}
+                                      handleDelete={handleDelete}
+                                      data={data}
+                                      metaData={metaData}
+                                      typeOfData={typeOfData}
+                                      contentId={contentId}
+                                      setShowConfirmationPopup={
+                                        setShowConfirmationPopup
+                                      }
+                                    />
+                                  ) : (
+                                    <NoteCard
+                                      key={i}
+                                      handleDelete={handleDelete}
+                                      data={data}
+                                      metaData={metaData}
+                                      typeOfData={typeOfData}
+                                      contentId={contentId}
+                                      handleEdit={handleEdit}
+                                      setShowConfirmationPopup={
+                                        setShowConfirmationPopup
+                                      }
+                                    />
+                                  );
+                                }
+                              )}
+                            </Container>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <EmptyDivContainer>
+                        <img
+                          src={emptyFileLogo}
+                          style={{ width: "200px", height: "200px" }}
+                        />
+                      </EmptyDivContainer>
+                    )}
+                  </div>
+                </DataContainer>
+              </>
+            ) : selectedSideBarTab === BIN ? (
+              <Bin />
+            ) : (
+              <></>
+            )}
+          </InnerContainer>
+        </OuterContainer>
         {showConfirmationPopup ? (
           <ConfirmationPopup
             title={showConfirmationPopup.title}

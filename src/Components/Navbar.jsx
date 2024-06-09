@@ -108,18 +108,6 @@ const Navbar = ({
           <MainIcon src={cloudIcon} />
         </NavbarBrand>
         <NavbarNav>
-          {userId ? (
-            <NavItem
-              active={pathname === "/home"}
-              onClick={() => {
-                navigate("/home");
-              }}
-            >
-              <NavLink to="/home" active={pathname === "/home"}>
-                Home
-              </NavLink>
-            </NavItem>
-          ) : null}
           <NavItem
             active={pathname === "/about"}
             onClick={() => {

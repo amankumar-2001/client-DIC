@@ -8,6 +8,7 @@ import { FaFilePdf } from "react-icons/fa";
 import { FaFileExcel } from "react-icons/fa";
 import { RiFilePpt2Fill } from "react-icons/ri";
 import { BsFillEyeFill } from "react-icons/bs";
+import { MdOutlineRestore } from "react-icons/md";
 import Modal from "./Modal";
 
 const FileContainer = styled.div`
@@ -214,6 +215,8 @@ export const ImageCard = ({
   handleDelete,
   handleDownload,
   setShowConfirmationPopup,
+  isDeletedView = false,
+  handleRestore = () => {},
 }) => {
   const [preview, setPreview] = useState(false);
   return (
@@ -228,84 +231,24 @@ export const ImageCard = ({
         preview={preview}
         setPreview={setPreview}
       />
-      <Overlay className="overlay">
-        <BsFillEyeFill
-          size={45}
-          style={{ padding: "4px", color: "white" }}
-          onClick={() => setPreview(true)}
-        />
-        <IoMdDownload
-          size={45}
-          style={{ padding: "4px", color: "white" }}
-          onClick={() => {
-            handleDownload({
-              publicUrl: metaData?.publicURL,
-              fileName: metaData?.fileName,
-            });
-          }}
-        />
-        <MdDelete
-          size={45}
-          style={{ padding: "4px", color: "white" }}
-          onClick={() => {
-            setShowConfirmationPopup({
-              title: "Confirmation!!",
-              message: "Are you sure, you want to delete?",
-              closeBtnText: "Cancel",
-              closeBtnFunction: () => {
-                setShowConfirmationPopup(null);
-              },
-              confirmBtnText: "Delete",
-              confirmBtnFunction: () => {
-                handleDelete({ contentId, typeOfData, data, toDelete: true });
-              },
-              successPopupText: "Deleted successfully",
-              successPopupBtnText: "Okay",
-              successPopupBtnFunction: () => {
-                setShowConfirmationPopup(null);
-              },
-              errorPopupBtnText: "Okay",
-              errorPopupBtnFunction: () => {
-                setShowConfirmationPopup(null);
-              },
-              state: "not-set",
-            });
-          }}
-        />
-      </Overlay>
-    </CardContainer>
-  );
-};
-
-export const FileCard = ({
-  data,
-  metaData,
-  typeOfData,
-  contentId,
-  handleDelete,
-  handleDownload,
-  setShowConfirmationPopup,
-}) => {
-  return (
-    <FileContainer>
-      {["application/pdf"].includes(metaData.fileType) ? (
-        <FaFilePdf size={45} style={{ padding: "4px" }} />
-      ) : ["text/csv", "excel"].includes(metaData.fileType) ? (
-        <FaFileExcel size={45} style={{ padding: "4px" }} />
-      ) : [
-          "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        ].includes(metaData.fileType) ? (
-        <RiFilePpt2Fill size={45} style={{ padding: "4px" }} />
+      {isDeletedView ? (
+        <Overlay className="overlay">
+          <MdOutlineRestore
+            size={45}
+            style={{ padding: "4px", color: "white" }}
+            onClick={() => handleRestore({ contentId })}
+          />
+        </Overlay>
       ) : (
-        <></>
-      )}
-      <FileContent>
-        <FileTitle>{metaData?.fileName}</FileTitle>
-        <FileLeft>
-          {getFileTypeFromMimeType(metaData?.fileType)}
+        <Overlay className="overlay">
+          <BsFillEyeFill
+            size={45}
+            style={{ padding: "4px", color: "white" }}
+            onClick={() => setPreview(true)}
+          />
           <IoMdDownload
-            size={25}
-            style={{ cursor: "pointer" }}
+            size={45}
+            style={{ padding: "4px", color: "white" }}
             onClick={() => {
               handleDownload({
                 publicUrl: metaData?.publicURL,
@@ -314,8 +257,8 @@ export const FileCard = ({
             }}
           />
           <MdDelete
-            style={{ cursor: "pointer" }}
-            size={25}
+            size={45}
+            style={{ padding: "4px", color: "white" }}
             onClick={() => {
               setShowConfirmationPopup({
                 title: "Confirmation!!",
@@ -341,7 +284,98 @@ export const FileCard = ({
               });
             }}
           />
-        </FileLeft>
+        </Overlay>
+      )}
+    </CardContainer>
+  );
+};
+
+export const FileCard = ({
+  data,
+  metaData,
+  typeOfData,
+  contentId,
+  handleDelete,
+  handleDownload,
+  setShowConfirmationPopup,
+  isDeletedView = false,
+  handleRestore = () => {},
+}) => {
+  return (
+    <FileContainer>
+      {["application/pdf"].includes(metaData.fileType) ? (
+        <FaFilePdf size={45} style={{ padding: "4px" }} />
+      ) : ["text/csv", "excel"].includes(metaData.fileType) ? (
+        <FaFileExcel size={45} style={{ padding: "4px" }} />
+      ) : [
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ].includes(metaData.fileType) ? (
+        <RiFilePpt2Fill size={45} style={{ padding: "4px" }} />
+      ) : (
+        <></>
+      )}
+      <FileContent>
+        <FileTitle>{metaData?.fileName}</FileTitle>
+        {isDeletedView ? (
+          <FileLeft>
+            <MdOutlineRestore
+              size={30}
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                handleRestore({
+                  contentId,
+                });
+              }}
+            />
+          </FileLeft>
+        ) : (
+          <FileLeft>
+            {getFileTypeFromMimeType(metaData?.fileType)}
+            <IoMdDownload
+              size={25}
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                handleDownload({
+                  publicUrl: metaData?.publicURL,
+                  fileName: metaData?.fileName,
+                });
+              }}
+            />
+            <MdDelete
+              style={{ cursor: "pointer" }}
+              size={25}
+              onClick={() => {
+                setShowConfirmationPopup({
+                  title: "Confirmation!!",
+                  message: "Are you sure, you want to delete?",
+                  closeBtnText: "Cancel",
+                  closeBtnFunction: () => {
+                    setShowConfirmationPopup(null);
+                  },
+                  confirmBtnText: "Delete",
+                  confirmBtnFunction: () => {
+                    handleDelete({
+                      contentId,
+                      typeOfData,
+                      data,
+                      toDelete: true,
+                    });
+                  },
+                  successPopupText: "Deleted successfully",
+                  successPopupBtnText: "Okay",
+                  successPopupBtnFunction: () => {
+                    setShowConfirmationPopup(null);
+                  },
+                  errorPopupBtnText: "Okay",
+                  errorPopupBtnFunction: () => {
+                    setShowConfirmationPopup(null);
+                  },
+                  state: "not-set",
+                });
+              }}
+            />
+          </FileLeft>
+        )}
       </FileContent>
     </FileContainer>
   );
@@ -354,39 +388,51 @@ export const BlogCard = ({
   contentId,
   handleDelete,
   setShowConfirmationPopup,
+  isDeletedView = false,
+  handleRestore = () => {},
 }) => {
   return (
     <BlogContainer>
       <BlogTop>
         <CardImage src={metaData?.publicURL} />
-        <MdDelete
-          size={25}
-          style={{ cursor: "pointer" }}
-          onClick={() => {
-            setShowConfirmationPopup({
-              title: "Confirmation!!",
-              message: "Are you sure, you want to delete?",
-              closeBtnText: "Cancel",
-              closeBtnFunction: () => {
-                setShowConfirmationPopup(null);
-              },
-              confirmBtnText: "Delete",
-              confirmBtnFunction: () => {
-                handleDelete({ contentId, typeOfData, data, toDelete: true });
-              },
-              successPopupText: "Deleted successfully",
-              successPopupBtnText: "Okay",
-              successPopupBtnFunction: () => {
-                setShowConfirmationPopup(null);
-              },
-              errorPopupBtnText: "Okay",
-              errorPopupBtnFunction: () => {
-                setShowConfirmationPopup(null);
-              },
-              state: "not-set",
-            });
-          }}
-        />
+        {isDeletedView ? (
+          <MdOutlineRestore
+            size={25}
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              handleRestore({ contentId });
+            }}
+          />
+        ) : (
+          <MdDelete
+            size={25}
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setShowConfirmationPopup({
+                title: "Confirmation!!",
+                message: "Are you sure, you want to delete?",
+                closeBtnText: "Cancel",
+                closeBtnFunction: () => {
+                  setShowConfirmationPopup(null);
+                },
+                confirmBtnText: "Delete",
+                confirmBtnFunction: () => {
+                  handleDelete({ contentId, typeOfData, data, toDelete: true });
+                },
+                successPopupText: "Deleted successfully",
+                successPopupBtnText: "Okay",
+                successPopupBtnFunction: () => {
+                  setShowConfirmationPopup(null);
+                },
+                errorPopupBtnText: "Okay",
+                errorPopupBtnFunction: () => {
+                  setShowConfirmationPopup(null);
+                },
+                state: "not-set",
+              });
+            }}
+          />
+        )}
       </BlogTop>
       <CardContent>
         <CardText>{data}</CardText>
@@ -403,6 +449,8 @@ export const NoteCard = ({
   handleDelete,
   handleEdit,
   setShowConfirmationPopup,
+  isDeletedView = false,
+  handleRestore = () => {},
 }) => {
   const [editText, setEditText] = useState(false);
   const [note, setNote] = useState(data);
@@ -410,64 +458,39 @@ export const NoteCard = ({
   return (
     <NoteContainer>
       <NoteContent>
-        <NoteTop>
-          <MdDelete
-            size={25}
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              setShowConfirmationPopup({
-                title: "Confirmation!!",
-                message: "Are you sure, you want to delete?",
-                closeBtnText: "Cancel",
-                closeBtnFunction: () => {
-                  setShowConfirmationPopup(null);
-                },
-                confirmBtnText: "Delete",
-                confirmBtnFunction: () => {
-                  handleDelete({ contentId, typeOfData, data, toDelete: true });
-                },
-                successPopupText: "Note deleted successfully",
-                successPopupBtnText: "Okay",
-                successPopupBtnFunction: () => {
-                  setShowConfirmationPopup(null);
-                },
-                errorPopupBtnText: "Okay",
-                errorPopupBtnFunction: () => {
-                  setShowConfirmationPopup(null);
-                },
-                state: "not-set",
-              });
-            }}
-          />
-          <MdEdit
-            size={25}
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              setEditText((prevEditText) => prevEditText ^ true);
-            }}
-          />
-          {editText ? (
-            <FaSave
-              style={{ cursor: "pointer" }}
+        {isDeletedView ? (
+          <NoteTop>
+            <MdOutlineRestore
               size={25}
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                handleRestore({ contentId });
+              }}
+            />
+          </NoteTop>
+        ) : (
+          <NoteTop>
+            <MdDelete
+              size={25}
+              style={{ cursor: "pointer" }}
               onClick={() => {
                 setShowConfirmationPopup({
                   title: "Confirmation!!",
-                  message: "Are you sure, you want to save changes?",
+                  message: "Are you sure, you want to delete?",
                   closeBtnText: "Cancel",
                   closeBtnFunction: () => {
                     setShowConfirmationPopup(null);
                   },
-                  confirmBtnText: "Save Changes",
+                  confirmBtnText: "Delete",
                   confirmBtnFunction: () => {
-                    handleEdit({
+                    handleDelete({
                       contentId,
                       typeOfData,
-                      data: note,
-                      toDelete: false,
+                      data,
+                      toDelete: true,
                     });
                   },
-                  successPopupText: "Changes saved successfully",
+                  successPopupText: "Note deleted successfully",
                   successPopupBtnText: "Okay",
                   successPopupBtnFunction: () => {
                     setShowConfirmationPopup(null);
@@ -478,14 +501,56 @@ export const NoteCard = ({
                   },
                   state: "not-set",
                 });
-
-                setEditText(true);
               }}
             />
-          ) : (
-            <></>
-          )}
-        </NoteTop>
+            <MdEdit
+              size={25}
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                setEditText((prevEditText) => prevEditText ^ true);
+              }}
+            />
+            {editText ? (
+              <FaSave
+                style={{ cursor: "pointer" }}
+                size={25}
+                onClick={() => {
+                  setShowConfirmationPopup({
+                    title: "Confirmation!!",
+                    message: "Are you sure, you want to save changes?",
+                    closeBtnText: "Cancel",
+                    closeBtnFunction: () => {
+                      setShowConfirmationPopup(null);
+                    },
+                    confirmBtnText: "Save Changes",
+                    confirmBtnFunction: () => {
+                      handleEdit({
+                        contentId,
+                        typeOfData,
+                        data: note,
+                        toDelete: false,
+                      });
+                    },
+                    successPopupText: "Changes saved successfully",
+                    successPopupBtnText: "Okay",
+                    successPopupBtnFunction: () => {
+                      setShowConfirmationPopup(null);
+                    },
+                    errorPopupBtnText: "Okay",
+                    errorPopupBtnFunction: () => {
+                      setShowConfirmationPopup(null);
+                    },
+                    state: "not-set",
+                  });
+
+                  setEditText(true);
+                }}
+              />
+            ) : (
+              <></>
+            )}
+          </NoteTop>
+        )}
         {editText ? (
           <Note
             type="textarea"
