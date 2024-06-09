@@ -11,6 +11,7 @@ import axios from "axios";
 import { connect } from "react-redux";
 import { FaUserCircle } from "react-icons/fa";
 import { DateTime } from "luxon";
+import { FaSearch } from "react-icons/fa";
 
 const Container = styled.div`
   height: 100%;
@@ -100,6 +101,39 @@ const UserInfo = styled.div`
   align-items: flex-start;
 `;
 
+const SearchDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  width: 400px;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 10px 15px;
+  border: 2px solid #ccc;
+  border-radius: 50px;
+  font-size: 16px;
+  outline: none;
+  background: none;
+  transition: border-color 0.3s;
+
+  &:focus {
+    border-color: black;
+  }
+
+  &::placeholder {
+    color: white;
+  }
+`;
+
+const SearchIcon = styled(FaSearch)`
+  position: absolute;
+  transform: translateX(170px);
+  color: white;
+`;
+
 const BlogImage = styled.img`
   max-width: 498px;
 `;
@@ -108,6 +142,7 @@ function Explore({ userId, screen = "home" }) {
   const navigate = useNavigate();
   const [dataState, setDataState] = useState("not-set");
   const [result, setResult] = useState([]);
+  const [searchText, setSearchText] = useState("");
   const [displayMessage, setDisplayMessage] = useState({
     type: "",
     message: "",
@@ -134,42 +169,55 @@ function Explore({ userId, screen = "home" }) {
 
       if (response.data && response.data.ok) {
         setResult(
-          response.data.data.map((blog) => {
-            const givenDate = DateTime.fromISO(blog.updatedAt, { zone: "utc" });
-            const currentDate = DateTime.now().setZone("utc");
+          response.data.data
+            .filter((blog) => {
+              return (
+                blog.userInfo.firstName
+                  .toLowerCase()
+                  .includes(searchText.toLowerCase()) ||
+                blog.userInfo?.lastName
+                  .toLowerCase()
+                  .includes(searchText.toLowerCase())
+              );
+            })
+            .map((blog) => {
+              const givenDate = DateTime.fromISO(blog.updatedAt, {
+                zone: "utc",
+              });
+              const currentDate = DateTime.now().setZone("utc");
 
-            const differenceInDays = currentDate.diff(givenDate, "days").days;
-            const differenceInHours = currentDate.diff(
-              givenDate,
-              "hours"
-            ).hours;
-            const differenceInMinutes = currentDate.diff(
-              givenDate,
-              "minutes"
-            ).minutes;
-            const differenceInSeconds = currentDate.diff(
-              givenDate,
-              "seconds"
-            ).seconds;
+              const differenceInDays = currentDate.diff(givenDate, "days").days;
+              const differenceInHours = currentDate.diff(
+                givenDate,
+                "hours"
+              ).hours;
+              const differenceInMinutes = currentDate.diff(
+                givenDate,
+                "minutes"
+              ).minutes;
+              const differenceInSeconds = currentDate.diff(
+                givenDate,
+                "seconds"
+              ).seconds;
 
-            let postedAt = 0;
+              let postedAt = 0;
 
-            if (Math.round(differenceInDays) !== 0) {
-              postedAt = `${Math.round(differenceInDays)} days`;
-            } else if (Math.round(differenceInHours) !== 0) {
-              postedAt = `${Math.round(differenceInHours)} hours`;
-            } else if (Math.round(differenceInMinutes) !== 0) {
-              postedAt = `${Math.round(differenceInMinutes)} minutes`;
-            } else {
-              postedAt = `${Math.round(differenceInSeconds)} seconds`;
-            }
+              if (Math.round(differenceInDays) !== 0) {
+                postedAt = `${Math.round(differenceInDays)} days`;
+              } else if (Math.round(differenceInHours) !== 0) {
+                postedAt = `${Math.round(differenceInHours)} hours`;
+              } else if (Math.round(differenceInMinutes) !== 0) {
+                postedAt = `${Math.round(differenceInMinutes)} minutes`;
+              } else {
+                postedAt = `${Math.round(differenceInSeconds)} seconds`;
+              }
 
-            return {
-              ...blog,
-              expand: false,
-              postedAt,
-            };
-          })
+              return {
+                ...blog,
+                expand: false,
+                postedAt,
+              };
+            })
         );
       } else {
         setDisplayMessage({ type: "error", message: response.data.message });
@@ -254,6 +302,22 @@ function Explore({ userId, screen = "home" }) {
         <h1 className="title">
           {screen === "landing" ? "Latest Blog" : "Explore"}
         </h1>
+        <SearchDiv>
+          <SearchInput
+            type="text"
+            placeholder="Search by name..."
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+            }}
+          />
+          <SearchIcon
+            size={25}
+            onClick={() => {
+              getData();
+            }}
+          />
+        </SearchDiv>
       </Header>
       <DataContainer landingPage={screen === "landing"}>
         {dataState === LOADING ? (
