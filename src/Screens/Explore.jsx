@@ -239,10 +239,10 @@ function Explore({ userId, screen = "home" }) {
   };
 
   useEffect(() => {
-    if (userId) {
-      getData();
-    } else if (screen === "landing") {
+    if (screen === "landing") {
       getExplore();
+    } else if (userId) {
+      getData();
     } else {
       navigate("/contact");
     }
@@ -251,7 +251,9 @@ function Explore({ userId, screen = "home" }) {
   return (
     <Container>
       <Header landingPage={screen === "landing"}>
-        <h1 className="title">{screen === "landing" ? "Latest Blog" : "Explore"}</h1>
+        <h1 className="title">
+          {screen === "landing" ? "Latest Blog" : "Explore"}
+        </h1>
       </Header>
       <DataContainer landingPage={screen === "landing"}>
         {dataState === LOADING ? (
