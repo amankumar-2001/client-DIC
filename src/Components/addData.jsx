@@ -180,6 +180,7 @@ function AddData({
   selectedTab,
   setSelectedTab,
   setCurrentBlock,
+  onSuccessfulAdd = () => {},
 }) {
   const [data, setData] = useState("");
   const [displayMessage, setDisplayMessage] = useState({
@@ -215,6 +216,7 @@ function AddData({
       if (response.data && response.data.ok) {
         setSelectedTab(null);
         setCurrentBlock("All");
+        onSuccessfulAdd();
       } else {
         setDisplayMessage({
           type: "error",

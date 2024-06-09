@@ -134,10 +134,6 @@ function CreateDropDown({
     }
   }, [file]);
 
-  useEffect(() => {
-    console.log({ selectedTab });
-  }, [selectedTab]);
-
   return (
     <ProfileDivContainer>
       <CustomTab

@@ -260,8 +260,6 @@ function GettingStartScreen({
     }
   }, [userId, currentBlock]);
 
-  console.log({ selectedSideBarTab });
-
   return (
     <>
       {displayMessage.type && (
@@ -318,6 +316,12 @@ function GettingStartScreen({
                         selectedTab={selectedTab}
                         setSelectedTab={setSelectedTab}
                         setCurrentBlock={setCurrentBlock}
+                        onSuccessfulAdd={() => {
+                          getData({
+                            typeOfData: "",
+                            userId: userId,
+                          });
+                        }}
                       />
                     ) : dataState === LOADING ? (
                       <div className="container">
