@@ -3,6 +3,7 @@ import "./pos.css";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { styled } from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { connect } from "react-redux";
 
 const Container = styled.div`
   display: flex;
@@ -37,7 +38,7 @@ const AboutContent = styled.div`
   padding: 36px;
 `;
 
-function AboutScreen() {
+function AboutScreen({ userId }) {
   const navigate = useNavigate();
   return (
     <OuterContainer>
@@ -52,7 +53,11 @@ function AboutScreen() {
               cursor: "pointer",
             }}
             onClick={() => {
-              navigate("/home");
+              if (userId) {
+                navigate("/home");
+              } else {
+                navigate("/");
+              }
             }}
           />
           <h1>CRUD Drive</h1>
@@ -94,4 +99,14 @@ function AboutScreen() {
   );
 }
 
-export default AboutScreen;
+const mapDispatchToProps = (dispatch) => {
+  return {};
+};
+
+const mapStateToProps = (state) => {
+  return {
+    userId: state.user.userId,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AboutScreen);

@@ -153,7 +153,7 @@ const Header = styled.div`
   grid-template-columns: 1fr 9fr;
 `;
 
-function ContactScreen({}) {
+function ContactScreen({ userId }) {
   const [dataState, setDataState] = useState("not-set");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -201,7 +201,11 @@ function ContactScreen({}) {
                   cursor: "pointer",
                 }}
                 onClick={() => {
-                  navigate("/home");
+                  if (userId) {
+                    navigate("/home");
+                  } else {
+                    navigate("/");
+                  }
                 }}
               />
               <TopHeading>Contact Us</TopHeading>
