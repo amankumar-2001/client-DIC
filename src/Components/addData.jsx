@@ -404,7 +404,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
   return {
     userFirstName: state.user.firstName,
-    userLastName: state.user.lastName,
+    userLastName: state.user.lastName || "",
     userEmail: state.user.email,
     userId: state.user.userId,
     userProfileImage: state.user.profileImage,
