@@ -3,7 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { styled } from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { IoMdImage } from "react-icons/io";
+import { IoMdArrowRoundBack, IoMdImage } from "react-icons/io";
 import { connect } from "react-redux";
 import { MdOutlineModeEditOutline } from "react-icons/md";
 import { BLOGS, LOADING, NOTES } from "../Utils/constant";
@@ -33,6 +33,7 @@ const EditProfileImage = styled.div`
   color: white;
   opacity: 0.8;
   border-radius: 8px;
+  border: 1px solid white;
 `;
 
 const EditIconContainer = styled.div`
@@ -61,8 +62,7 @@ const CustomInputContainer = styled.input`
   align-items: center;
   height: 100%;
   background: none;
-  border: none;
-  border: 1px solid grey;
+  border: 1px solid white;
   border-radius: 8px;
   height: 46px;
   margin: 14px 0px;
@@ -151,8 +151,7 @@ const TextArea = styled.textarea`
   align-items: center;
   height: 100%;
   background: none;
-  border: none;
-  border: 1px solid grey;
+  border: 1px solid white;
   border-radius: 8px;
   margin: 14px 0px;
   color: white;
@@ -169,6 +168,12 @@ const TextArea = styled.textarea`
     color: white;
     border-bottom: 2px solid black;
   }
+`;
+
+const Header = styled.div`
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 10fr 1fr;
 `;
 
 function AddData({
@@ -252,7 +257,33 @@ function AddData({
   return (
     <Container>
       <InnerContainer>
-        <TopHeading>Your new {selectedTab.label.slice(0, -1)}</TopHeading>
+        <Header>
+          <IoMdArrowRoundBack
+            size={50}
+            style={{
+              marginLeft: "6px",
+              padding: "4px",
+              color: "black",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setSelectedTab(null);
+            }}
+          />
+          <TopHeading>Your new {selectedTab.label.slice(0, -1)}</TopHeading>
+          <IoMdArrowRoundBack
+            size={50}
+            style={{
+              marginLeft: "6px",
+              padding: "4px",
+              color: "black",
+              cursor: "pointer",
+              visibility: "hidden",
+            }}
+            onClick={() => {}}
+          />
+        </Header>
+
         <CustomForm onSubmit={handleSubmit}>
           <CustomInputContainer
             type="text"
@@ -324,7 +355,7 @@ function AddData({
               </EditProfileImage>
               <TextArea
                 id="FormControlTextarea1"
-                rows="15"
+                rows="13"
                 value={data}
                 onChange={(e) => setData(e.target.value)}
                 placeholder="Write your Blog"
