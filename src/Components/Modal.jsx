@@ -20,12 +20,12 @@ const ModalContent = styled.div`
   border-radius: 8px;
 `;
 
-const Modal = ({ isOpen, onClose, children }) => {
+const Modal = ({ isOpen, onClose, children, modalStyle = {} }) => {
   if (!isOpen) return null;
 
   return (
     <ModalWrapper onClick={onClose}>
-      <ModalContent onClick={(e) => e.stopPropagation()}>
+      <ModalContent onClick={(e) => e.stopPropagation()} style={modalStyle}>
         {children}
       </ModalContent>
     </ModalWrapper>

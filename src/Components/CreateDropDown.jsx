@@ -9,6 +9,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { saveDataUrl } from "../apiDict";
 import { AiFillFileText } from "react-icons/ai";
+import HardLoader from "./hardLoader";
 
 const ProfileWrapper = styled.div`
   position: fixed;
@@ -79,6 +80,7 @@ function CreateDropDown({
   userEmail,
   userId,
   userProfileImage,
+  onSuccessfulAdd,
   setCurrentBlock,
 }) {
   const [data, setData] = useState("");
@@ -88,14 +90,14 @@ function CreateDropDown({
     type: "",
     message: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [hardLoading, setHardLoading] = useState(false);
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const imageInputRef = useRef(null);
 
   const handleSubmit = async () => {
     try {
-      setLoading(true);
+      setHardLoading(true);
 
       const formData = new FormData();
       formData.append("userId", userId);
@@ -112,6 +114,7 @@ function CreateDropDown({
       if (response.data && response.data.ok) {
         setSelectedTab(null);
         setCurrentBlock("All");
+        onSuccessfulAdd();
         onClose();
       } else {
         setDisplayMessage({
@@ -119,7 +122,7 @@ function CreateDropDown({
           message: response.data.message,
         });
       }
-      setLoading(false);
+      setHardLoading(false);
     } catch (error) {
       setDisplayMessage({
         type: "error",
@@ -136,6 +139,7 @@ function CreateDropDown({
 
   return (
     <ProfileDivContainer>
+      <HardLoader loading={hardLoading} />
       <CustomTab
         onClick={() => {
           setSelectedTab(Types_OPTIONS[0]);

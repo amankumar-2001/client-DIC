@@ -279,6 +279,12 @@ function GettingStartScreen({
             setCurrentBlock={setCurrentBlock}
             selectedSideBarTab={selectedSideBarTab}
             setSelectedSideBarTab={setSelectedSideBarTab}
+            onSuccessfulAdd={() => {
+              getData({
+                typeOfData: "",
+                userId: userId,
+              });
+            }}
           />
           <InnerContainer style={{ height: "100%" }}>
             {selectedSideBarTab === HOME ? (

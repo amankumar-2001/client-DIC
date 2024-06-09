@@ -141,7 +141,7 @@ function Bin({ userId }) {
       setDisplayMessage({ type: "error", message: err.message });
     }
   };
-  console.log({ result });
+
   useEffect(() => {
     if (userId) {
       getData({

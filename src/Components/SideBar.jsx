@@ -99,6 +99,7 @@ const CreateNew = styled.div`
 
 const Sidebar = ({
   onClinkNew,
+  onSuccessfulAdd,
   selectedTabForNew,
   setSelectedTabForNew,
   setCurrentBlock,
@@ -137,6 +138,7 @@ const Sidebar = ({
             }}
             selectedTab={selectedTabForNew}
             setCurrentBlock={setCurrentBlock}
+            onSuccessfulAdd={onSuccessfulAdd}
           />
         ) : null}
 
