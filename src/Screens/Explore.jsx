@@ -302,22 +302,24 @@ function Explore({ userId, screen = "home" }) {
         <h1 className="title">
           {screen === "landing" ? "Latest Blog" : "Explore"}
         </h1>
-        <SearchDiv>
-          <SearchInput
-            type="text"
-            placeholder="Search by name..."
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-            }}
-          />
-          <SearchIcon
-            size={25}
-            onClick={() => {
-              getData();
-            }}
-          />
-        </SearchDiv>
+        {screen !== "landing" && (
+          <SearchDiv>
+            <SearchInput
+              type="text"
+              placeholder="Search by name..."
+              value={searchText}
+              onChange={(e) => {
+                setSearchText(e.target.value);
+              }}
+            />
+            <SearchIcon
+              size={25}
+              onClick={() => {
+                getData();
+              }}
+            />
+          </SearchDiv>
+        )}
       </Header>
       <DataContainer landingPage={screen === "landing"}>
         {dataState === LOADING ? (
