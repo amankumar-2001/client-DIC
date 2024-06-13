@@ -66,7 +66,7 @@ const BlogContainer = styled.div`
   flex-direction: column;
   align-items: center;
   border-radius: 8px;
-  width: 50%;
+  width: ${({ landingPage }) => (landingPage ? "100%" : "50%")};
   min-width: 500px;
   margin: 12px;
   border: 1px solid ${({ landingPage }) => (landingPage ? "white" : "black")};
